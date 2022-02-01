@@ -1,0 +1,45 @@
+\newcommand{\code}[1]{{\small\textsf{#1}}}
+\newcommand{\p}{\quad|\enspace}
+
+\newcommand{\binop}[2]{#1 \oplus #2}
+\newcommand{\lift}[1]{\lbrack #1 \rbrack}
+\newcommand{\abs}[3]{\lambda #1:#2.#3}
+\newcommand{\app}[2]{#1\ #2}
+\newcommand{\appP}[2]{(\app{#1}{#2})}
+\newcommand{\cast}[4]{#1:#2 \Longrightarrow^{#3} #4}
+\newcommand{\castP}[4]{(\cast{#1}{#2}{#3}{#4})}
+\newcommand{\case}[4]{\code{case}\ #1\ \code{of}\ \lbrace\code{null}\mapsto#2; #3\mapsto#4\rbrace}
+\newcommand{\blame}[1]{\code{blame}\ #1}
+\newcommand{\arrow}[2]{#1\to#2}
+
+\newcommand{\typing}[3]{#1\vdash#2:#3}
+\newcommand{\typingG}[2]{\typing{\Gamma}{#1}{#2}}
+
+\newcommand{\compat}[2]{#1\sim #2}
+
+\newcommand{\red}[2]{#1 \longrightarrow #2}
+\newcommand{\subst}[3]{#1 [#2\mapsto#3]}
+
+\newcommand{\subtyp}[2]{#1 <: #2}
+\newcommand{\subtypn}[2]{#1 <:_n #2}
+\newcommand{\subtyppos}[2]{#1 <:_+ #2}
+\newcommand{\subtypneg}[2]{#1 <:_- #2}
+
+\newcommand{\etrm}[1]{\lceil#1\rceil}
+\newcommand{\itrm}[1]{\lfloor#1\rfloor}
+\newcommand{\typofityp}[1]{\llbracket#1\rrbracket}
+\newcommand{\trmofitrm}[1]{\llbracket#1\rrbracket}
+\newcommand{\ctxofictx}[1]{\llbracket#1\rrbracket}
+\newcommand{\trmofetrm}[1]{\llparenthesis#1\rrparenthesis}
+
+\newcommand{\shaded}[1]{\colorbox{lightgray}{$\displaystyle #1$}}
+
+\newcommand{\elvis}[2]{#1 \mathrel{{?}{:}} #2}
+\newcommand{\elvisP}[2]{(\elvis{#1}{#2})}
+
+\newcommand{\blop}{\mathit{op}}
+\newcommand{\blderef}{\mathit{deref}}
+
+\newcommand{\coq}[1]{(\text{Coq: }\texttt{#1})}
+
+\newcommand{\sfor}[2]{#1 \textsf{ safe } #2}

@@ -1,0 +1,55 @@
+\begin{figure}
+    \infrule[Var]
+    {x:A \in \Gamma}
+    {\typingG{x}{A}}
+
+    \infax[Base]
+    {\typingG{c}{\iota}}
+
+    \infrule[Binop]
+    {\typingG{N}{\iota} \andalso \typingG{M}{\iota}}
+    {\typingG{\binop{N}{M}}{\iota}}
+
+    \infax[Null]
+    {\typingG{\code{null}}{D?}}
+
+    \infrule[Lift]
+    {\typingG{N}{D}}
+    {\typingG{\lift{N}}{D?}}
+
+    \infrule[Abs]
+    {\typing{\Gamma,x:A}{N}{B}}
+    {\typingG{\abs{x}{A}{N}}{\arrow{A}{B}}}
+
+    \infrule[App]
+    {\typingG{N}{\arrow{A}{B}} \andalso \typingG{M}{A}}
+    {\typingG{\app{N}{M}}{B}}
+
+    \infax[Blame]
+    {\typingG{\blame{p}}{A}}
+
+    \infrule[Cast]
+    {\typingG{M}{A} \andalso \compat{A}{B}}
+    {\typingG{\castP{M}{A}{p}{B}}{B}}
+
+    \infrule[Case]
+    {\typingG{N}{D?} \andalso \typingG{M}{A} \andalso \typing{G,x:D}{L}{A}}
+    {\typingG{\case{N}{M}{x}{L}}{A}}
+
+    \infax[Compat-Base]
+    {\compat{\iota}{\iota}}
+
+    \infrule[Compat-Null-R]
+    {\compat{A}{D}}
+    {\compat{A}{D?}}
+
+    \infrule[Compat-Null-L]
+    {\compat{D}{A}}
+    {\compat{D?}{A}}
+
+    \infrule[Compat-Arrow]
+    {\compat{A}{A'} \andalso \compat{B}{B'}}
+    {\compat{\arrow{A}{B}}{\arrow{A'}{B'}}}
+
+  \caption{Typing rules of null blame calculus}\label{fig:typing}
+\end{figure}

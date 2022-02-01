@@ -1,0 +1,37 @@
+\begin{figure}
+    \infrule[Cast]
+    {\typingG{M}{A} \andalso \shaded{\subtyp{A}{B}}}
+    {\typingG{\castP{M}{A}{p}{B}}{B}}
+
+    \infrule[Imp]
+    {\typingG{\hat{M}}{\hat{A}}}
+    {\typingG{\itrm{\hat{M}}}{\typofityp{\hat{A}}}}
+
+    \infrule[Imp-Var]
+    {x:\hat{A} \in \Gamma}
+    {\typingG{\hat{x}}{\hat{A}}}
+
+    \infax[Imp-Base]
+    {\typingG{\hat{c}}{\iota}}
+
+    \infrule[Imp-Binop]
+    {\typingG{\hat{N}}{\iota} \andalso \typingG{\hat{M}}{\iota}}
+    {\typingG{\binop{\hat{N}}{\hat{M}}}{\iota}}
+
+    \infax[Imp-Null]
+    {\typingG{\hat{\code{null}}}{\hat{A}}}
+
+    \infrule[Imp-Abs]
+    {\typing{\Gamma,x:\hat{A}}{\hat{N}}{\hat{B}}}
+    {\typingG{\abs{x}{\hat{A}}{\hat{N}}}{\arrow{\hat{A}}{\hat{B}}}}
+
+    \infrule[Imp-App]
+    {\typingG{\hat{N}}{\arrow{\hat{A}}{\hat{B}}} \andalso \typingG{\hat{M}}{\hat{A}}}
+    {\typingG{\app{\hat{N}}{\hat{M}}}{\hat{B}}}
+
+    \infrule[Imp-Exp]
+    {\typingG{M}{\typofityp{\hat{A}}}}
+    {\typingG{\etrm{M}}{\hat{A}}}
+
+  \caption{Typing rules of null blame calculus for sublanguages with explicit and implicit nulls}\label{fig:imptyping}
+\end{figure}

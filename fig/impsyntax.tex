@@ -1,0 +1,23 @@
+\begin{figure}
+  \textbf{Explicit Terms}\\
+  \begin{align*}
+L, M, N &\Coloneqq \ \cdots \\
+&\p \itrm{\hat{M}}              \tag*{Implicit Term} \\
+  \end{align*}
+  \textbf{Implicit Terms}\\
+  \begin{align*}
+      \hat{L}, \hat{M}, \hat{N} &\Coloneqq \ \hat{x}    \tag*{Variable} \\
+      &\p \hat{c}                     \tag*{Base Constant} \\
+&\p \binop{\hat{M}}{\hat{N}}          \tag*{Base Operation} \\
+&\p \hat{\code{null}}           \tag*{Null Constant} \\
+&\p \abs{x}{\hat{A}}{\hat{N}}         \tag*{Function Abstraction} \\
+&\p \app{\hat{L}}{\hat{M}}            \tag*{Function Application} \\
+&\p \etrm{M}              \tag*{Explicit Term} \\
+  \end{align*}
+  \textbf{Implicit Types}\\
+  \begin{align*}
+      \hat{A}, \hat{B}, \hat{C} &\Coloneqq \iota       \tag*{Base Type} \\
+      &\p \arrow{\hat{A}}{\hat{B}}          \tag*{Function Type} \\
+  \end{align*}
+  \caption{Extension of null blame calculus for sublanguages with explicit and implicit nulls}\label{fig:impsyntax}
+\end{figure}

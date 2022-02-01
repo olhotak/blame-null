@@ -1,0 +1,63 @@
+\begin{figure}
+    \infax[Base]
+    {\subtyp{\iota}{\iota}}
+
+    \infrule[Null-Sup]
+    {\subtyp{D}{E}}
+    {\subtyp{D}{E?}}
+
+    \infrule[Null]
+    {\subtyp{D}{E}}
+    {\subtyp{D?}{E?}}
+
+    \infrule[Arrow]
+    {\subtyp{A'}{A} \andalso \subtyp{B}{B'}}
+    {\subtyp{\arrow{A}{B}}{\arrow{A'}{B'}}}
+
+    \infax[Naive-Base]
+    {\subtypn{\iota}{\iota}}
+
+    \infrule[Naive-Null-Sup]
+    {\subtypn{D}{E}}
+    {\subtypn{D}{E?}}
+
+    \infrule[Naive-Null]
+    {\subtypn{D}{E}}
+    {\subtypn{D?}{E?}}
+
+    \infrule[Naive-Arrow]
+    {\shaded{\subtypn{A}{A'}} \andalso \subtypn{B}{B'}}
+    {\subtypn{\arrow{A}{B}}{\arrow{A'}{B'}}}
+
+    \infax[Positive-Base]
+    {\subtyppos{\iota}{\iota}}
+
+    \infrule[Positive-Null-Sup]
+    {\subtyppos{D}{E}}
+    {\subtyppos{D}{E?}}
+
+    \infrule[Positive-Null]
+    {\subtyppos{D}{E}}
+    {\subtyppos{D?}{E?}}
+
+    \infrule[Positive-Arrow]
+    {\shaded{\subtypneg{A'}{A}} \andalso \subtyppos{B}{B'}}
+    {\subtyppos{\arrow{A}{B}}{\arrow{A'}{B'}}}
+
+    \infax[Negative-Base]
+    {\subtypneg{\iota}{\iota}}
+
+    \infrule[Negative-Null-Sup]
+    {\subtypneg{D}{E}}
+    {\subtypneg{D}{E?}}
+
+    \infrule[Negative-Null]
+    {\subtypneg{D}{E}}
+    {\subtypneg{D?}{E?}}
+
+    \infrule[Negative-Arrow]
+    {\shaded{\subtyppos{A'}{A}} \andalso \subtypneg{B}{B'}}
+    {\subtypneg{\arrow{A}{B}}{\arrow{A'}{B'}}}
+
+  \caption{Subtyping rules of null blame calculus}\label{fig:subtyping}
+\end{figure}

@@ -1,0 +1,39 @@
+\section{Properties}
+
+\begin{lemma}[Substitution Commutes With Translation]
+    \coq{open\_trm\_of\_ietrm}
+    \begin{enumerate}
+        \item $\trmofitrm{\subst{\hat{N}}{\hat{x}}{\hat{M}}} = \subst{\trmofitrm{\hat{N}}}{x}{\trmofitrm{\hat{M}}}$
+        \item $\trmofetrm{\subst{N}{x}{M}} = \subst{\trmofetrm{N}}{x}{\trmofetrm{M}}$
+    \end{enumerate}
+\end{lemma}
+
+\begin{definition}[Translation of Typing Contexts]
+    \coq{ctx\_of\_ictx}
+    A typing context $\ctxofictx{\Gamma}$ is obtained by replacing
+    each binding of the form $x:\hat{A}$ in $\Gamma$ with $x:\typofityp{\hat{A}}$
+    and keeping each binding of the form $x:A$ unchanged.
+\end{definition}
+
+\begin{theorem}[Translation Preserves Typing]
+    \coq{desugaring\_typing}
+    \begin{enumerate}
+        \item If $\typing{\Gamma}{\hat{N}}{\hat{A}}$, then
+            $\typing{\ctxofictx{\Gamma}}{\trmofitrm{\hat{N}}}{\typofityp{\hat{A}}}$.
+        \item If $\typing{\Gamma}{N}{A}$ (according to the rules of \Cref{fig:imptyping}), then
+            $\typing{\ctxofictx{\Gamma}}{\trmofetrm{N}}{A}$ (according to the rules of \Cref{fig:typing}).
+    \end{enumerate}
+\end{theorem}
+
+\begin{theorem}[Blame Safety of Translation]
+    \coq{desugaring\_blame\_safety}
+    Let $p$ be any blame label other than $\blop$ or $\blderef$.
+    (Note that, in particular, $p$ could be $\overline{\blop}$
+    or $\overline{\blderef}$.)
+    \begin{enumerate}
+        \item If $\typing{\Gamma}{\hat{N}}{\hat{A}}$, then
+            $\sfor{\trmofitrm{\hat{N}}}{p}$.
+        \item If $\typing{\Gamma}{N}{A}$, then
+            $\sfor{\trmofetrm{N}}{p}$.
+    \end{enumerate}
+\end{theorem}

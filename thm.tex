@@ -1,0 +1,69 @@
+\section{Properties}
+
+\begin{lemma}[Compatibility Symmetry]
+    \coq{compat\_sym}
+    If $\compat{A}{B}$ then $\compat{B}{A}$.
+\end{lemma}
+
+\begin{lemma}[Subtyping Compatibility]
+    \coq{subcompat}
+    If $\subtyp{A}{B}$, then $\compat{A}{B}$.
+\end{lemma}
+
+\begin{lemma}[Substitution]
+    \coq{substitution}
+    If $\typing{\Gamma,x:B}{N}{A}$ and $\typingG{M}{B}$, then $\typingG{\subst{N}{x}{M}}{A}$.
+\end{lemma}
+
+\begin{theorem}[Preservation]
+    \coq{preservation}
+    If $\typingG{N}{A}$ and $\red{N}{M}$, then
+    either $M = \blame{p}$ for some $p$ or $\typingG{M}{A}$.
+\end{theorem}
+
+\begin{lemma}[Canonical Forms Arrow]
+    \coq{canonical\_forms\_arrow}
+    If $\typing{}{V}{\arrow{A}{B}}$, then
+    either $V = \abs{x}{A}{N}$ for some $x$ and $N$, or
+    $V = \cast{W}{\arrow{A'}{B'}}{p}{\arrow{A''}{B''}}$ for some
+    $W, A', B', A'', B''$, and $p$.
+\end{lemma}
+
+\begin{theorem}[Progress]
+    \coq{progress}
+    If $\typing{}{N}{A}$ then either $N$ is a value,
+    $\red{N}{M}$ for some $M$, or $N = \blame{p}$ for some $p$.
+\end{theorem}
+
+\begin{theorem}[Tangram Lemma]
+    \coq{tangram\_fwd}
+    \coq{tangram\_rev}
+    \coq{tangram\_naive\_fwd}
+    \coq{tangram\_naive\_rev}
+    \begin{enumerate}
+        \item $\subtyp{A}{B}$ if and only if $\subtyppos{A}{B}$ and $\subtypneg{A}{B}$.
+        \item $\subtypn{A}{B}$ if and only if $\subtyppos{A}{B}$ and $\subtypneg{B}{A}$.
+    \end{enumerate}
+\end{theorem}
+
+\begin{definition}[Safe Term]
+    \coq{sfor}
+    A term $N$ is \emph{safe} for blame label $p$, written $\sfor{N}{p}$, if $N \neq \blame{p}$,
+    every cast in $N$ of the form $\cast{M}{A}{p}{B}$ satisfies $\subtyppos{A}{B}$,
+    and every cast in $N$ of the form $\cast{M}{A}{\overline{p}}{B}$ satisfies $\subtypneg{A}{B}$.
+\end{definition}
+
+\begin{lemma}[Substitution Preserves Safe Terms]
+    \coq{subst\_pres\_sfor}
+    If $\sfor{N}{p}$ and $\sfor{M}{p}$, then $\sfor{\subst{N}{x}{M}}{p}$.
+\end{lemma}
+
+\begin{theorem}[Safe Term Preservation]
+    \coq{sfor\_preservation}
+    If $\typingG{N}{A}$, $\sfor{N}{p}$, and $\red{N}{M}$, then $\sfor{M}{p}$.
+\end{theorem}
+
+\begin{theorem}[Safe Term Progress]
+    \coq{sfor\_progress}
+    If $\typing{}{N}{A}$, $\sfor{N}{p}$, and $\red{N}{\blame{q}}$, then $p \neq q$.
+\end{theorem}
