@@ -1,41 +1,140 @@
-\section{Properties}
+\section{Properties\label{sec:thm}}
+
+\subsection{Type Safety}
+
+We have proven type safety of the calculus following the syntactic approach of \citet{DBLP:journals/iandc/WrightF94}.
+
+\begin{theorem}[Preservation]
+    \coq{preservation}\\
+    If $\typingG{N}{A}$ and $\red{N}{M}$, then
+    either $M = \blame{p}$ for some $p$ or $\typingG{M}{A}$.
+\end{theorem}
+\begin{proof}
+    The proof is by induction on the typing derivation.
+    The \rn{App} and \rn{Case-NonNull} cases depend on a substitution lemma, shown below.
+    The \rn{Cast-App} case depends on symmetry of the compatibility relation $\sim$.
+\end{proof}
+
+\begin{lemma}[Substitution]
+    \coq{substitution}\\
+    If $\typing{\Gamma,x:B}{N}{A}$ and $\typingG{M}{B}$, then $\typingG{\subst{N}{x}{M}}{A}$.
+\end{lemma}
+\begin{proof}
+    The proof is standard, by induction on the typing of $N$. The \rn{Var} case depends on
+    a weakening lemma, also proved by straightforward induction.
+\end{proof}
 
 \begin{lemma}[Compatibility Symmetry]
     \coq{compat\_sym}
     If $\compat{A}{B}$ then $\compat{B}{A}$.
 \end{lemma}
-
-\begin{lemma}[Subtyping Compatibility]
-    \coq{subcompat}
-    If $\subtyp{A}{B}$, then $\compat{A}{B}$.
-\end{lemma}
-
-\begin{lemma}[Substitution]
-    \coq{substitution}
-    If $\typing{\Gamma,x:B}{N}{A}$ and $\typingG{M}{B}$, then $\typingG{\subst{N}{x}{M}}{A}$.
-\end{lemma}
-
-\begin{theorem}[Preservation]
-    \coq{preservation}
-    If $\typingG{N}{A}$ and $\red{N}{M}$, then
-    either $M = \blame{p}$ for some $p$ or $\typingG{M}{A}$.
-\end{theorem}
-
-\begin{lemma}[Canonical Forms Arrow]
-    \coq{canonical\_forms\_arrow}
-    If $\typing{}{V}{\arrow{A}{B}}$, then
-    either $V = \abs{x}{A}{N}$ for some $x$ and $N$, or
-    $V = \cast{W}{\arrow{A'}{B'}}{p}{\arrow{A''}{B''}}$ for some
-    $W, A', B', A'', B''$, and $p$.
-\end{lemma}
+\begin{proof}
+    The proof is by straightforward induction on the derivation of $\compat{A}{B}$.
+\end{proof}
 
 \begin{theorem}[Progress]
     \coq{progress}
     If $\typing{}{N}{A}$ then either $N$ is a value,
     $\red{N}{M}$ for some $M$, or $N = \blame{p}$ for some $p$.
 \end{theorem}
+\begin{proof}
+    The proof is by induction on the typing derivation.
+    The \rn{App} case depends on a canonical forms lemma for function types, shown below.
+\end{proof}
 
-\begin{theorem}[Tangram Lemma]
+\begin{lemma}[Canonical Forms Arrow]
+    \coq{canonical\_forms\_arrow}\\
+    If $\typing{}{V}{\arrow{A}{B}}$, then
+    either $V = \abs{x}{A}{N}$ for some $x$ and $N$, or
+    $V = \cast{W}{\arrow{A'}{B'}}{p}{\arrow{A''}{B''}}$ for some
+    $W, A', B', A'', B''$, and $p$.
+\end{lemma}
+\begin{proof}
+    The proof is by straightforward induction on the typing derivation.
+\end{proof}
+
+\subsection{Blame Safety}
+
+In addition to type safety, we have also proved blame safety following directly
+the approach of \citet{DBLP:conf/esop/WadlerF09} (see also \citet{DBLP:conf/snapl/Wadler15} for a more accessible summary of the approach). The applicability of this standard
+approach is one of the benefits of the calculus relative to the calculus of
+\citet{DBLP:conf/ecoop/NietoRRL19}.
+
+The approach depends on four subtyping relations,
+defined for the calculus in \Cref{fig:subtyping}. Intuitively,
+a cast between types related by positive subtyping cannot give rise to positive
+blame and a cast between types related by negative subtyping cannot give rise to
+negative blame. Ordinary subtyping is then an intersection of these two relations,
+so a cast between types related by ordinary subtyping cannot give rise to any blame.
+We will discuss naive subtyping and its relationship to the other three subtyping relations
+in \Cref{sec:tangram}.
+
+\input{fig/subtyping}
+
+
+We make the intuitive understanding of positive and negative subtyping precise as follows:
+\begin{definition}[Safe Term\label{def:sfor}]
+    \coq{sfor}
+    A term $N$ is \emph{safe} for blame label $p$, written $\sfor{N}{p}$, if $N \neq \blame{p}$,
+    every cast in $N$ of the form $\cast{M}{A}{p}{B}$ satisfies $\subtyppos{A}{B}$,
+    and every cast in $N$ of the form $\cast{M}{A}{\overline{p}}{B}$ satisfies $\subtypneg{A}{B}$.
+\end{definition}
+
+With this definition, we can prove blame safety of the calculus, that
+when $\sfor{N}{p}$, $N$ cannot reduce to $\blame{p}$ in any number of
+steps.
+
+\begin{theorem}[Safe Term Preservation]
+    \coq{sfor\_preservation}\\
+    If $\typingG{N}{A}$, $\sfor{N}{p}$, and $\red{N}{M}$, then $\sfor{M}{p}$.
+\end{theorem}
+\begin{proof}
+    The proof is by induction on the derivation of $\red{N}{M}$.
+    Each case is straightforward except in the \rn{App} and \rn{Case-NonNull} cases,
+    we need the following lemma to show that the safety relation is preserved by
+    substitution.
+\end{proof}
+
+\begin{lemma}[Substitution Preserves Safe Terms]
+    \coq{subst\_pres\_sfor}\\
+    If $\sfor{N}{p}$ and $\sfor{M}{p}$, then $\sfor{\subst{N}{x}{M}}{p}$.
+\end{lemma}
+\begin{proof}
+    By straightforward induction on the structure of $N$.
+\end{proof}
+
+\begin{theorem}[Safe Term Progress]
+    \coq{sfor\_progress}\\
+    If $\typing{}{N}{A}$, $\sfor{N}{p}$, and $\red{N}{\blame{q}}$, then $p \neq q$.
+\end{theorem}
+\begin{proof}
+    By straightforward induction on the derivation of $\red{N}{\blame{q}}$.
+\end{proof}
+
+\subsection{Naive Subtyping and the Tangram Lemma\label{sec:tangram}}
+
+Naive subtyping relates types according to how \emph{definite} they are
+in the sense of gradual typing. In our specific setting, $A$ is a naive
+subtype of $B$ if they have the same structure, but some non-nullable components $D$ of $A$
+may be replaced by nullable components $D?$ in $B$, regardless of whether they occur
+covariantly or contravariantly. In a language with implicit nulls, the less definite
+type $D?$ appearing in a program might be intended to mean either a non-nullable
+type $D$ or a nullable type $D?$; the distinction would be expressible using these
+more definite types in a language with explicit nulls.
+
+\TODO{I'm not entirely sure about the following paragraph.}
+Naive subtyping
+corresponds to the situation when types from a language with explicit nulls (such
+as Scala) are approximated using types in a language with implicit nulls (such as Java),
+or conversely, when a compiler for a language with explicit nulls needs to understand
+types that it reads from code in a language with implicit nulls.
+The implementation of the Scala 3 compiler uses naive subtyping to translate types
+from Java code into its own Scala internal representation.
+
+The Tangram Lemma of \citet{DBLP:conf/esop/WadlerF09} relates these four subtyping
+relations. We show that it holds for the specific relations defined in \Cref{fig:subtyping}.
+
+\begin{theorem}[Tangram Lemma\label{thm:tangram}]
     \coq{tangram\_fwd}
     \coq{tangram\_rev}
     \coq{tangram\_naive\_fwd}
@@ -45,25 +144,10 @@
         \item $\subtypn{A}{B}$ if and only if $\subtyppos{A}{B}$ and $\subtypneg{B}{A}$.
     \end{enumerate}
 \end{theorem}
+\begin{proof}
+    Each of the four cases is proved by a straightforward induction on the derivation
+    of $\subtyp{A}{B}$, the derivation of $\subtypn{A}{B}$, or mutual induction
+    on the derivations of $\subtyppos{A}{B}$ and $\subtypneg{A}{B}$.
+\end{proof}
 
-\begin{definition}[Safe Term]
-    \coq{sfor}
-    A term $N$ is \emph{safe} for blame label $p$, written $\sfor{N}{p}$, if $N \neq \blame{p}$,
-    every cast in $N$ of the form $\cast{M}{A}{p}{B}$ satisfies $\subtyppos{A}{B}$,
-    and every cast in $N$ of the form $\cast{M}{A}{\overline{p}}{B}$ satisfies $\subtypneg{A}{B}$.
-\end{definition}
-
-\begin{lemma}[Substitution Preserves Safe Terms]
-    \coq{subst\_pres\_sfor}
-    If $\sfor{N}{p}$ and $\sfor{M}{p}$, then $\sfor{\subst{N}{x}{M}}{p}$.
-\end{lemma}
-
-\begin{theorem}[Safe Term Preservation]
-    \coq{sfor\_preservation}
-    If $\typingG{N}{A}$, $\sfor{N}{p}$, and $\red{N}{M}$, then $\sfor{M}{p}$.
-\end{theorem}
-
-\begin{theorem}[Safe Term Progress]
-    \coq{sfor\_progress}
-    If $\typing{}{N}{A}$, $\sfor{N}{p}$, and $\red{N}{\blame{q}}$, then $p \neq q$.
-\end{theorem}
+\TODO{Explain the practical consequence of the Tangram Lemma for the Scala/Java case.}

@@ -1,2 +1,21 @@
 \section{Introduction}
-\cite{DBLP:conf/ecoop/NietoRRL19}
+Programming languages such as Scala, Kotlin, C\#, and Swift are adopting
+type systems that track whether a reference may be null. An
+important concern in such languages is interfacing with existing code in
+a language that does not track nullability in types, such as an older
+version of the same language, or a different language such as Java or C.
+
+Gradual typing~\cite{siek2006gradual} is a general framework that
+enables to reason soundly about the interface between program
+components written in languages with different type systems.
+\citet{DBLP:conf/ecoop/NietoRRL19} applied gradual typing to the
+case of type systems that track null references.
+
+\TODO{more details about why the system in that paper is complicated}
+- three function types
+- casts as values
+- weird cast reduction relation
+
+\TODO{explain our improvement over that paper}
+- just a nullable type D?
+- Tangram lemma

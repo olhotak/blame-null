@@ -13,7 +13,7 @@
 {\red{\cast{\lift{V}}{D?}{p}{E?}}{\lift{\cast{V}{D}{p}{E}}}}
 
 \infax[Cast-Null-NonNull]
-{\red{\cast{\lift{V}}{D?}{p}{E}}{\blame{p}}}
+{\red{\cast{\code{null}}{D?}{p}{E}}{\blame{p}}}
 
 \infax[Cast-Lift-NonNull]
 {\red{\cast{\lift{V}}{D?}{p}{E}}{\cast{V}{D}{p}{E}}}
@@ -29,10 +29,10 @@
 
 \infrule[Ctx]
 {\red{N}{M}}
-{\red{E[N]}{E[M]}}
+{\red{\mathcal{E}[N]}{\mathcal{E}[M]}}
 
 \infax[Err]
-{\red{E[\blame{p}]}{\blame{p}}}
+{\red{\mathcal{E}[\blame{p}]}{\blame{p}}}
 
 %\infrule[App-CtxL]
 %{\red{M}{M'}}
@@ -48,7 +48,7 @@
 %\infax[App-ErrR]
 %{\red{\app{V}{(\blame{p})}}{\blame{p}}}
 
-$$ E \Coloneqq [] \p \app{E}{N} \p \app{V}{E} \p \cast{E}{A}{p}{B} \p \case{E}{M}{x}{L} \p \lift{E} \p \binop{E}{M} \p \binop{V}{E}$$
+$$ \mathcal{E} \Coloneqq [] \p \app{\mathcal{E}}{N} \p \app{V}{\mathcal{E}} \p \cast{\mathcal{E}}{A}{p}{B} \p \case{\mathcal{E}}{M}{x}{L} \p \lift{\mathcal{E}} \p \binop{\mathcal{E}}{M} \p \binop{V}{\mathcal{E}}$$
   \caption{Reduction rules of null blame calculus}\label{fig:reduction}
 \end{figure}
 

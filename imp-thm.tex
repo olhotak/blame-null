@@ -1,39 +1,148 @@
 \section{Properties}
 
-\begin{lemma}[Substitution Commutes With Translation]
+In this section, we show two important properties of the two-sublanguage calculus.
+First, we show that the translation defined in the previous section
+preserves typing: if a term in the implicit sublanguage or the explicit
+sublanguage can be typed using the rules from \Cref{fig:imptyping}, then
+the corresponding term translated to the core calculus can also be given
+the corresponding type.
+Second, we show a form of blame safety, that the only way in which a
+term in the range of the translation can fail is due to one of the
+null checks in the implicit language.
+
+\subsection{Type Preservation of the Translation}
+
+Recall that typing contexts $\Gamma$ for the two-sublanguage calculus bind
+each variable either to a type $\hat{A}$ in the implicit sublanguage or to
+a type $A$ in the explicit sublanguage, but typing contexts $\Gamma$ in the core
+calculus bind each variable to a type $A$ in the core calculus. Therefore,
+in order to state the theorem that the translation preserves types, we must
+first define a translation from typing contexts for the two-sublanguage
+calculus to typing contexts for the core calculus:
+
+\begin{definition}[Translation of Typing Contexts]
+    \coq{ctx\_of\_ictx}\\
+    A typing context $\ctxofictx{\Gamma}$ is obtained by replacing
+    each binding of the form $x:\hat{A}$ in $\Gamma$ with $x:\typofityp{\hat{A}}$
+    and keeping each binding of the form $x:A$ unchanged.
+\end{definition}
+
+We can now formulate the type preservation theorem as follows, for typings
+of terms $\hat{N}$ in the implicit sublanguage and terms $N$ in the explicit sublanguage.
+
+\begin{theorem}[Translation Preserves Typing\label{thm:translationtyping}]
+    \coq{desugaring\_typing}
+    \begin{enumerate}
+        \item If $\typing{\Gamma}{\hat{N}}{\hat{A}}$, then
+            $\typing{\ctxofictx{\Gamma}}{\trmofitrm{\hat{N}}}{\typofityp{\hat{A}}}$.
+        \item If $\typing{\Gamma}{N}{A}$ (according to the typing rules of \Cref{fig:imptyping}), then
+            $\typing{\ctxofictx{\Gamma}}{\trmofetrm{N}}{A}$ (according to the typing rules of \Cref{fig:typing}).
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    The proof is by mutual induction on the derivations of the typings
+        $\typing{\Gamma}{\hat{N}}{\hat{A}}$
+        and
+        $\typing{\ctxofictx{\Gamma}}{\trmofetrm{N}}{A}$.
+        The \rn{Cast} typing rule for the two-sublanguage calculus
+        has the premise $\subtyp{A}{B}$ in place of the premise $\compat{A}{B}$
+        in the corresponding rule for the core calculus. Therefore, for the
+        \rn{Cast} case, we need a lemma to show that the former implies the latter,
+        proved below.
+        The \rn{Abs}, \rn{Case}, and \rn{Imp-Abs} rules are each parameterized by an
+        arbitrary fresh variable $x$, so the cases for these rules require to prove
+        a conclusion that holds for \emph{any} such fresh $x$. To do so, we need to
+        show that the translation functions $\trmofitrm{\cdot}$
+        and $\trmofetrm{\cdot}$ commute with $\alpha$ renaming of variables.
+        In fact, we prove a stronger result, that these
+        two functions commute with substitution of an arbitrary term for a
+        free variable, which we show below in \Cref{lem:substcommutes}.
+        All other cases are straightforward.
+\end{proof}
+
+\begin{lemma}[Subtyping Compatibility]
+    \coq{subcompat}
+    If $\subtyp{A}{B}$, then $\compat{A}{B}$.
+\end{lemma}
+\begin{proof}
+    The proof is by straightforward induction on the derivation of $\subtyp{A}{B}$.
+\end{proof}
+
+
+\begin{lemma}[Substitution Commutes With Translation\label{lem:substcommutes}]
     \coq{open\_trm\_of\_ietrm}
     \begin{enumerate}
         \item $\trmofitrm{\subst{\hat{N}}{\hat{x}}{\hat{M}}} = \subst{\trmofitrm{\hat{N}}}{x}{\trmofitrm{\hat{M}}}$
         \item $\trmofetrm{\subst{N}{x}{M}} = \subst{\trmofetrm{N}}{x}{\trmofetrm{M}}$
     \end{enumerate}
 \end{lemma}
+\begin{proof}
+    The proof is by straightforward mutual induction on the structure of $\hat{N}$ and $N$.
+\end{proof}
 
-\begin{definition}[Translation of Typing Contexts]
-    \coq{ctx\_of\_ictx}
-    A typing context $\ctxofictx{\Gamma}$ is obtained by replacing
-    each binding of the form $x:\hat{A}$ in $\Gamma$ with $x:\typofityp{\hat{A}}$
-    and keeping each binding of the form $x:A$ unchanged.
-\end{definition}
 
-\begin{theorem}[Translation Preserves Typing]
-    \coq{desugaring\_typing}
-    \begin{enumerate}
-        \item If $\typing{\Gamma}{\hat{N}}{\hat{A}}$, then
-            $\typing{\ctxofictx{\Gamma}}{\trmofitrm{\hat{N}}}{\typofityp{\hat{A}}}$.
-        \item If $\typing{\Gamma}{N}{A}$ (according to the rules of \Cref{fig:imptyping}), then
-            $\typing{\ctxofictx{\Gamma}}{\trmofetrm{N}}{A}$ (according to the rules of \Cref{fig:typing}).
-    \end{enumerate}
-\end{theorem}
+\subsection{Blame Safety}
+
+When a program in a language with explicit nulls executes, we would like to
+be sure that none of the casts in it fail. After all, this is the purpose of
+tracking nullability in the type system. In a program with only explicit
+terms (excluding $\itrm{\hat{M}}$, which allows to embed an implicit
+term), the only casts are typed using the rule \rn{Cast} in \Cref{fig:imptyping}.
+This rules requires $\subtyp{A}{B}$ as a premise. We stated that a cast that
+obeys this subtyping cannot fail, but we should prove this statement. We will
+prove something stronger.
+
+What if, in addition, the program can contain terms of the implicit sublanguage?
+We can no longer claim that casts in such a program cannot fail, since typing of the
+implicit sublanguage makes no guarantee about null safety. We will prove instead
+that \emph{if} a cast in such a program fails, \emph{then}
+we can blame one of the null checks in the implicit sublanguage. Therefore,
+the cast failure cannot be caused by the casts in the explicit sublanguage,
+even though the program combines fragments of both implicit and explicit sublanguages.
+The result is general for arbitrary programs in the two-sublanguage calculus,
+including, in particular, programs that only explicit terms and no implicit terms,
+as discussed in the previous paragraph. Since such
+programs do not contain any of the null checks from the implicit sublanguage,
+they cannot fail at all.
 
 \begin{theorem}[Blame Safety of Translation]
-    \coq{desugaring\_blame\_safety}
-    Let $p$ be any blame label other than $\blop$ or $\blderef$.
-    (Note that, in particular, $p$ could be $\overline{\blop}$
+    \coq{desugaring\_blame\_safety}\\
+    Let $q$ be any blame label other than $\blop$ or $\blderef$.
+    (Note that, in particular, $q$ could be $\overline{\blop}$
     or $\overline{\blderef}$.)
     \begin{enumerate}
         \item If $\typing{\Gamma}{\hat{N}}{\hat{A}}$, then
-            $\sfor{\trmofitrm{\hat{N}}}{p}$.
+            $\sfor{\trmofitrm{\hat{N}}}{q}$.
         \item If $\typing{\Gamma}{N}{A}$, then
-            $\sfor{\trmofetrm{N}}{p}$.
+            $\sfor{\trmofetrm{N}}{q}$.
     \end{enumerate}
 \end{theorem}
+\begin{proof}
+    The proof is by mutual induction on the derivations of 
+        $\typing{\Gamma}{\hat{N}}{\hat{A}}$
+        and $\typing{\Gamma}{N}{A}$.
+        As in \Cref{thm:translationtyping}, the cases
+        for \rn{Abs}, \rn{Case}, and \rn{Imp-Abs} require
+        \Cref{lem:substcommutes}, as well as a similar lemma
+        for the \emph{safe} relation, shown below.
+        The only other interesting case is the one for \rn{Cast}.
+        First, it requires case analysis of whether the blame label
+        $p$ in the conclusion of \rn{Cast} is the same as the
+        blame label $q$ in the premise of the theorem or its
+        negation $\overline{q}$. If one of these equalities holds,
+        we need to show that either $\subtyppos{A}{B}$
+        or $\subtypneg{A}{B}$, respectively, which we
+        do by applying the Tangram Lemma (\Cref{thm:tangram})
+        to the premise $\subtyp{A}{B}$ of the \rn{Cast} rule.
+        On the other hand, if $q \neq p \neq \overline{q}$, then
+        the cast is \emph{safe} for $q$ according to \Cref{def:sfor}.
+\end{proof}
+
+\begin{lemma}[Safe Terms Unaffected by Variable Substitution]
+    \coq{close\_pres\_sfor}\\
+    If $\sfor{\subst{N}{x}{x'}}{p}$,
+    then $\sfor{N}{p}$,
+\end{lemma}
+\begin{proof}
+    The proof is by straightforward induction on the structure of $N$.
+\end{proof}

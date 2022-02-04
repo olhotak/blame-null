@@ -1,6 +1,74 @@
-\section{The Simple Null Blame Calculus}
+\section{The Simple Null Blame Calculus\label{sec:defn}}
+In this section, we introduce \TODO{Find a good name for this calculus and the two calculi in section 4.}
+a core calculus for a language that tracks nullability in types.
+We define the syntax, typing and subtyping rules, and a reduction relation.
+In \Cref{sec:thm}, we will prove standard type safety and blame safety properties.
+Later, in \Cref{sec:impdefn}, we will extend this calculus with additional
+terms that model a language in which null references are implicit, not tracked in the
+type system, to study the interaction of the two sublanguages.
+
+The syntax of the calculus is shown in \Cref{fig:syntax}. The basic values
+are constants $c$ of a base type $\iota$, function abstractions $\abs{x}{A}{N}$
+of a function type $\arrow{A}{B}$, and the null constant $\code{null}$.
+In addition to the two \emph{definite types} $\iota$ and $\arrow{A}{B}$,
+the type system includes \emph{nullable types} $D?$, where $D$ is any definite type.
+The constructors of $D?$ are the null constant $\code{null}$ and the
+lift operation $\lift{N}$, where $N$ is a term of type $D$.
+When $V$ is a value, $\lift{V}$ is also considered a value.
+A cast $\cast{V}{\arrow{A}{B}}{p}{\arrow{A'}{B'}}$ of a function value $V$ is 
+also a value. When such a cast-function value is applied to an argument, the
+argument will first be cast from $A'$ to $A$, then the function $V$ will be
+applied to it, and finally the result will be cast from $B$ to $B'$.
+
+In addition to values, the calculus includes terms for function application $\app{L}{M}$,
+general casts $\cast{M}{A}{p}{B}$, a pattern matching construct $\case{L}{M}{x}{N}$ that
+destructs terms of nullable types $D?$, and a failure result $\blame{p}$. As is standard
+in gradual type systems, each cast has a blame label $p$ so that the result of a failing computation
+can be traced to the cast that failed. A blame label can be positive $p$, indicating
+that the term inside the cast caused the cast to fail, or negative $\overline{p}$,
+indicating that the context in which the cast appears caused the cast to fail.
 
 \input{fig/syntax}
+
+The typing rules of the calculus are shown in \Cref{fig:typing}.
+The rules for variables, base type constants and operations, and function
+abstraction and application are standard. The
+\rn{Null} and \rn{Lift} rules identify the null constant $\code{null}$ and the lift
+operation $\lift{M}$ as the constructors of a nullable type $D?$.
+The \rn{Blame} rule specifies that a failure result $\blame{p}$ is possible at
+any type $A$. \TODO{Consider removing the Blame rule.} The \rn{Cast} rule allows casts from type $A$ to type $B$ as
+long as $A$ and $B$ are \emph{compatible}, written $\arrow{A}{B}$. Informally, two types are compatible
+if they have the same structure, but differ only in the nullability of their components.
+Finally, the \rn{Case} rule specifies that the $\code{case}$ construct
+destructs terms of a nullable type $D?$.
+
 \input{fig/typing}
+
+The operational semantics of the calculus is shown in \Cref{fig:reduction}.
+The \rn{App} rule is standard $\beta$-reduction. 
+The \rn{Cast-App} rule defines $\beta$-reduction for a function wrapped
+in a cast, ensuring that that the argument $W$ and the final result of the
+function application are cast accordingly.
+There are four rules for reducing casts from a nullable type $D?$.
+A cast of $\code{null}$ to another nullable type $E?$ reduces to just $\code{null}$ (\rn{Cast-Null-Nullable}). 
+A cast of $\code{null}$ to a non-nullable type $E$ reduces to $\blame{p}$ (\rn{Cast-Null-NonNull}).
+A cast of a lifted value $\lift{V}$ from type $D?$ to a non-nullable
+type $E$ evaluates to $V$ wrapped in a cast from $D$ to $E$ (\rn{Cast-Lift-NonNull}).
+When such a lifted value is cast to a \emph{nullable} type $E?$,
+this result is additionally lifted: $\lift{\cast{V}{D}{p}{E}}$ (\rn{Cast-Lift-Nullable}).
+A cast from a base type can only be back to the base type;
+it reduces to the value $V$ inside the cast (\rn{Cast-Base}).
+Two rules reduce the pattern-matching $\code{case}$ construct.
+When the scrutinee is $\code{null}$, the $\code{case}$ reduces
+to the term in the $\code{null}$ branch (\rn{Case-Null}).
+When the scrutinee is a lifted value $\lift{V}$, the
+$\code{case}$ reduces to the term in the non-null branch,
+with $V$ substituted for the parameter $x$ (\rn{Case-NonNull}).
+A grammar of evaluation contexts $\mathcal{E}$ ensures call-by-value reduction
+in function applications, inside casts, pattern matches, lift operations,
+and base type operations. The \rn{Ctx} rule specifies reduction inside
+an evaluation context. The \rn{Err} rule specifies that a cast failure
+inside an evaluation context floats up to the top level, terminating
+the reduction sequence.
+
 \input{fig/reduction}
-\input{fig/subtyping}
