@@ -9,21 +9,21 @@
 L, M, N &\Coloneqq \ x    \tag*{Variable} \\
 &\p c                     \tag*{Base Constant} \\
 &\p \binop{M}{N}          \tag*{Base Operation} \\
-&\p \code{null}           \tag*{Null Constant} \\
-&\p \lift{M}              \tag*{Lift} \\
 &\p \abs{x}{A}{N}         \tag*{Function Abstraction} \\
 &\p \app{L}{M}            \tag*{Function Application} \\
-&\p \cast{M}{A}{p}{B}     \tag*{Cast} \\
+&\p \code{null}           \tag*{Null Constant} \\
+&\p \lift{M}              \tag*{Lift} \\
 &\p \case{L}{M}{x}{N}     \tag*{Case} \\
+&\p \cast{M}{A}{p}{B}     \tag*{Cast} \\
 &\p \blame{p}             \tag*{Blame} \\
   \end{align*}
   \textbf{Values}\\
   \begin{align*}
 V, W &\Coloneqq c                     \tag*{Base Constant} \\
 &\p \binop{V}{W}          \tag*{Base Operation on Values} \\
+&\p \abs{x}{A}{N}         \tag*{Function Abstraction} \\
 &\p \code{null}           \tag*{Null Constant} \\
 &\p \lift{V}              \tag*{Lift of a Value} \\
-&\p \abs{x}{A}{N}         \tag*{Function Abstraction} \\
 &\p \cast{V}{\arrow{A}{B}}{p}{\arrow{A'}{B'}}     \tag*{Function-typed Cast of a Value} \\
   \end{align*}
   \textbf{Types}\\

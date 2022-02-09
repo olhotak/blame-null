@@ -60,14 +60,17 @@ the approach of \citet{DBLP:conf/esop/WadlerF09} (see also \citet{DBLP:conf/snap
 approach is one of the benefits of the calculus relative to the calculus of
 \citet{DBLP:conf/ecoop/NietoRRL19}.
 
-The approach depends on four subtyping relations,
-defined for the calculus in \Cref{fig:subtyping}. Intuitively,
-a cast between types related by positive subtyping cannot give rise to positive
-blame and a cast between types related by negative subtyping cannot give rise to
-negative blame. Ordinary subtyping is then an intersection of these two relations,
-so a cast between types related by ordinary subtyping cannot give rise to any blame.
-We will discuss naive subtyping and its relationship to the other three subtyping relations
-in \Cref{sec:tangram}.
+The approach depends on four subtyping relations, defined for the
+calculus in \Cref{fig:subtyping}.  Intuitively, a cast between types
+related by positive subtyping cannot give rise to positive blame
+(blame with the same label as the cast) and a cast between types
+related by negative subtyping cannot give rise to negative blame
+(blame with a label that is the negative of that on the
+cast). Ordinary subtyping is an intersection of these two
+relations, so a cast between types related by ordinary subtyping
+cannot give rise to any blame.  We will discuss naive subtyping and
+its relationship to the other three subtyping relations in
+\Cref{sec:tangram}.
 
 \input{fig/subtyping}
 
@@ -75,9 +78,11 @@ in \Cref{sec:tangram}.
 We make the intuitive understanding of positive and negative subtyping precise as follows:
 \begin{definition}[Safe Term\label{def:sfor}]
     \coq{sfor}
-    A term $N$ is \emph{safe} for blame label $p$, written $\sfor{N}{p}$, if $N \neq \blame{p}$,
+    A term $N$ is \emph{safe} for blame label $p$, written
+    $\sfor{N}{p}$, if $N$ has no subterm of the form $\blame{p}$,
     every cast in $N$ of the form $\cast{M}{A}{p}{B}$ satisfies $\subtyppos{A}{B}$,
-    and every cast in $N$ of the form $\cast{M}{A}{\overline{p}}{B}$ satisfies $\subtypneg{A}{B}$.
+    and every cast in $N$ of the form $\cast{M}{A}{\overline{p}}{B}$
+    satisfies $\subtypneg{A}{B}$.
 \end{definition}
 
 With this definition, we can prove blame safety of the calculus, that
@@ -123,6 +128,8 @@ type $D$ or a nullable type $D?$; the distinction would be expressible using the
 more definite types in a language with explicit nulls.
 
 \TODO{I'm not entirely sure about the following paragraph.}
+\TODO{PLW: I suggest deleting the paragraph, and leaving this
+  discussion for the section on implicit and explicit languages}
 Naive subtyping
 corresponds to the situation when types from a language with explicit nulls (such
 as Scala) are approximated using types in a language with implicit nulls (such as Java),
@@ -151,3 +158,5 @@ relations. We show that it holds for the specific relations defined in \Cref{fig
 \end{proof}
 
 \TODO{Explain the practical consequence of the Tangram Lemma for the Scala/Java case.}
+
+\TODO{PLW: Explain the grayed out portions of Figure 4, or remove them.}

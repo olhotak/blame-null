@@ -1,4 +1,5 @@
-\newcommand{\code}[1]{{\small\textsf{#1}}}
+%\newcommand{\code}[1]{{\small\textsf{#1}}}
+\newcommand{\code}[1]{\textsf{#1}}
 \newcommand{\p}{\quad|\enspace}
 
 \newcommand{\binop}[2]{#1 \oplus #2}
@@ -8,7 +9,8 @@
 \newcommand{\appP}[2]{(\app{#1}{#2})}
 \newcommand{\cast}[4]{#1:#2 \Longrightarrow^{#3} #4}
 \newcommand{\castP}[4]{(\cast{#1}{#2}{#3}{#4})}
-\newcommand{\case}[4]{\code{case}\ #1\ \code{of}\ \lbrace\code{null}\mapsto#2; #3\mapsto#4\rbrace}
+\newcommand{\nil}{\code{null}}
+\newcommand{\case}[4]{\code{case}\ #1\ \code{of}\ \lbrace\nil\mapsto#2; \lift{#3}\mapsto#4\rbrace}
 \newcommand{\blame}[1]{\code{blame}\ #1}
 \newcommand{\arrow}[2]{#1\to#2}
 
@@ -22,8 +24,8 @@
 
 \newcommand{\subtyp}[2]{#1 <: #2}
 \newcommand{\subtypn}[2]{#1 <:_n #2}
-\newcommand{\subtyppos}[2]{#1 <:_+ #2}
-\newcommand{\subtypneg}[2]{#1 <:_- #2}
+\newcommand{\subtyppos}[2]{#1 <:^+ #2}
+\newcommand{\subtypneg}[2]{#1 <:^- #2}
 
 \newcommand{\etrm}[1]{\lceil#1\rceil}
 \newcommand{\itrm}[1]{\lfloor#1\rfloor}
@@ -34,7 +36,8 @@
 
 \newcommand{\shaded}[1]{\colorbox{lightgray}{$\displaystyle #1$}}
 
-\newcommand{\elvis}[2]{#1 \mathrel{{?}{:}} #2}
+\newcommand{\elvisop}{\mathrel{\code{{?}{:}}}}
+\newcommand{\elvis}[2]{#1 \elvisop #2}
 \newcommand{\elvisP}[2]{(\elvis{#1}{#2})}
 
 \newcommand{\blop}{\mathit{op}}
