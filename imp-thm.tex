@@ -44,11 +44,6 @@ of terms $\hat{N}$ in the implicit sublanguage and terms $N$ in the explicit sub
         $\typing{\Gamma}{\hat{N}}{\hat{A}}$
         and
         $\typing{\ctxofictx{\Gamma}}{\trmofetrm{N}}{A}$.
-        The \rn{Cast} typing rule for the two-sublanguage calculus
-        has the premise $\subtyp{A}{B}$ in place of the premise $\compat{A}{B}$
-        in the corresponding rule for the core calculus. Therefore, for the
-        \rn{Cast} case, we need a lemma to show that the former implies the latter,
-        proved below.
         The \rn{Abs}, \rn{Case}, and \rn{Imp-Abs} rules are each parameterized by an
         arbitrary fresh variable $x$, so the cases for these rules require to prove
         a conclusion that holds for \emph{any} such fresh $x$. To do so, we need to
@@ -59,15 +54,6 @@ of terms $\hat{N}$ in the implicit sublanguage and terms $N$ in the explicit sub
         free variable, which we show below in \Cref{lem:substcommutes}.
         All other cases are straightforward.
 \end{proof}
-
-\begin{lemma}[Subtyping Compatibility]
-    \coq{subcompat}
-    If $\subtyp{A}{B}$, then $\compat{A}{B}$.
-\end{lemma}
-\begin{proof}
-    The proof is by straightforward induction on the derivation of $\subtyp{A}{B}$.
-\end{proof}
-
 
 \begin{lemma}[Substitution Commutes With Translation\label{lem:substcommutes}]
     \coq{open\_trm\_of\_ietrm}
@@ -81,68 +67,109 @@ of terms $\hat{N}$ in the implicit sublanguage and terms $N$ in the explicit sub
 \end{proof}
 
 
-\subsection{Blame Safety}
 
-When a program in a language with explicit nulls executes, we would like to
-be sure that none of the casts in it fail. After all, this is the purpose of
-tracking nullability in the type system. In a program with only explicit
-terms (excluding $\itrm{\hat{M}}$, which allows to embed an implicit
-term), the only casts are typed using the rule \rn{Cast} in \Cref{fig:imptyping}.
-This rules requires $\subtyp{A}{B}$ as a premise. We stated that a cast that
-obeys this subtyping cannot fail, but we should prove this statement. We will
-prove something stronger.
+\subsection{Interoperability}
 
-What if, in addition, the program can contain terms of the implicit sublanguage?
-We can no longer claim that casts in such a program cannot fail, since typing of the
-implicit sublanguage makes no guarantee about null safety. We will prove instead
-that \emph{if} a cast in such a program fails, \emph{then}
-we can blame one of the null checks in the implicit sublanguage. Therefore,
-the cast failure cannot be caused by the casts in the explicit sublanguage,
-even though the program combines fragments of both implicit and explicit sublanguages.
-The result is general for arbitrary programs in the two-sublanguage calculus,
-including, in particular, programs that only explicit terms and no implicit terms,
-as discussed in the previous paragraph. Since such
-programs do not contain any of the null checks from the implicit sublanguage,
-they cannot fail at all.
+The two-sublanguage calculus allows an implicit language term to be used in the
+explicit language, but with an inconvenient type, so it cannot be used directly.
+For example, the constant term 
+$\itrm{\hat{c}}$ has the nullable type $\iota?$, so it cannot be an operand of
+the $\oplus$ operator, which requires operands of type $\iota$. Similarly,
+the constant function term $\itrm{\abs{x}{\hat{A}}{\hat{N}}}$ has the nullable type
+$\arrowP{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}?$
+(where $\hat{B}$
+is a type of the body $\hat{N}$), so it cannot be used directly in a function
+application.
 
-\begin{theorem}[Blame Safety of Translation]
-    \coq{desugaring\_blame\_safety}\\
-    Let $q$ be any blame label other than $\blop$ or $\blderef$.
-    (Note that, in particular, $q$ could be $\overline{\blop}$
-    or $\overline{\blderef}$.)
-    \begin{enumerate}
-        \item If $\typing{\Gamma}{\hat{N}}{\hat{A}}$, then
-            $\sfor{\trmofitrm{\hat{N}}}{q}$.
-        \item If $\typing{\Gamma}{N}{A}$, then
-            $\sfor{\trmofetrm{N}}{q}$.
-    \end{enumerate}
-\end{theorem}
-\begin{proof}
-    The proof is by mutual induction on the derivations of 
-        $\typing{\Gamma}{\hat{N}}{\hat{A}}$
-        and $\typing{\Gamma}{N}{A}$.
-        As in \Cref{thm:translationtyping}, the cases
-        for \rn{Abs}, \rn{Case}, and \rn{Imp-Abs} require
-        \Cref{lem:substcommutes}, as well as a similar lemma
-        for the \emph{safe} relation, shown below.
-        The only other interesting case is the one for \rn{Cast}.
-        First, it requires case analysis of whether the blame label
-        $p$ in the conclusion of \rn{Cast} is the same as the
-        blame label $q$ in the premise of the theorem or its
-        negation $\overline{q}$. If one of these equalities holds,
-        we need to show that either $\subtyppos{A}{B}$
-        or $\subtypneg{A}{B}$, respectively, which we
-        do by applying the Tangram Lemma (\Cref{thm:tangram})
-        to the premise $\subtyp{A}{B}$ of the \rn{Cast} rule.
-        On the other hand, if $q \neq p \neq \overline{q}$, then
-        the cast is \emph{safe} for $q$ according to \Cref{def:sfor}.
-\end{proof}
+One obviously safe solution is to explicitly handle the possibility of
+an implicit-language subterm evaluating to null using the \code{case}
+construct. In $\case{\itrm{\hat{c}}}{N}{x}{M}$, the constant $\hat{c}$
+is available in $M$ through the variable $x$ with the convenient type $\iota$.
+More complicated types require additional pattern matching. For example,
+a $\code{case}$ term can extract a value of function type 
+$\arrow{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}$
+from one of nullable type
+$\arrowP{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}?$,
+but additional lifts and pattern matching are required to
+deal with the remaining nullable types $\typofityp{\hat{A}}$ and $\typofityp{\hat{B}}$.
+Although inconvenient, this approach is safe: if we do not use
+any casts, there are no casts that could fail (except for the null checks
+$\blop$ and $\blderef$ associated with operations in the implicit sublanguage).
 
-\begin{lemma}[Safe Terms Unaffected by Variable Substitution]
-    \coq{close\_pres\_sfor}\\
-    If $\sfor{\subst{N}{x}{x'}}{p}$,
-    then $\sfor{N}{p}$,
+If we are confident that the implicit-language subterm will not evaluate to
+null, a more convenient approach is to cast it to a more suitable type.
+We define a \emph{naive} translation of implicit types as follows:
+\begin{align*}
+\typofitypn{\iota} &= \iota\\
+\typofitypn{\arrow{\hat{A}}{\hat{B}}} &= \arrow{\typofitypn{\hat{A}}}{\typofitypn{\hat{B}}}
+\end{align*}
+The naive translation maps a constant type of the implicit language
+to a constant type of the core language, and it maps a function type
+of the implicit language to a function type of the core language.
+Thus, given a term $\hat{N}$ of type $\hat{A}$ in the implicit
+language, we can use it directly in the explicit language if we
+embed it using the following cast:
+$$\cast{\itrm{\hat{N}}}{\typofityp{\hat{A}}}{\blie}{\typofitypn{\hat{A}}}$$
+
+This is convenient but unsafe, since the cast could fail. However,
+the cast can fail only with positive blame, blaming the implicit language
+subterm $\hat{N}$ rather than the surrounding explicit language context.
+This is because 
+$\typofitypn{\hat{A}}$ is a naive subtype of
+$\typofityp{\hat{A}}$:
+\begin{lemma}
+    For every implicit type $\hat{A}$, $\subtypn{\typofitypn{\hat{A}}}{\typofityp{\hat{A}}}$.
 \end{lemma}
-\begin{proof}
-    The proof is by straightforward induction on the structure of $N$.
-\end{proof}
+\TODO{prove here and in Coq}
+Then by the Tangram Lemma, $\subtypneg{\typofityp{\hat{A}}}{\typofitypn{\hat{A}}}$,
+so a term containing this form of cast is safe for $\overline{\blie}$,
+so it cannot reduce to $\blame{\overline{\blie}}$.
+
+
+Conversely, it is possible to use a term of the explicit language in
+the implicit language, but we must again adapt the types. According to the
+typing rule \rn{Imp-Exp}, an embedding $\etrm{M}$ can be typed only if the
+explicit language term $M$ has a type $\typofityp{\hat{A}}$ that is the
+image of some implicit language type $\hat{A}$ under the tranlation
+$\typofityp{\cdot}$ of implicit types. For an explicit term
+$N$ of base type $\iota$, this is easy to achieve using just lifting, since
+$\lift{N}$ has type $\iota? = \typofityp{\iota}$. For an explicit term of function type,
+however, ensuring that its type is the image of some implicit
+language type requires adjusting its domain and codomain types.
+Specifically, if the domain type of an explicit-language function
+is a definite (non-null type), pattern matching needs to be added
+before applying the function to handle the case that the actual
+argument from the implicit language could be null.
+Although it is possible to use a term of the explicit language
+in the implicit language without adding any casts, it may require
+adding multiple lifts and pattern matching, and is thus inconvenient.
+
+If we are confident about lack of null references, we can again
+use a cast to conveniently allow an explicit-language term of any
+type to be embedded in the implicit language. To do so, we first define
+the \emph{erasure} of an explicit-language type to be the implicit-language type
+determined as follows:
+\begin{align*}
+    \itypoftyp{D?} &= \itypoftyp{D} \\
+    \itypoftyp{\iota} &= \iota \\
+    \itypoftyp{\arrow{A}{B}} &= \arrow{\itypoftyp{A}}{\itypoftyp{B}}
+\end{align*}
+Then \emph{any} explicit term $M$ of \emph{any} explicit type $A$ can be embedded
+in the implicit language using the following cast:
+$$\etrm{\cast{M}{A}{\blei}{\typofityp{\itypoftyp{A}}}}$$
+
+Again, this is convenient but unsafe, since the cast may fail.
+However, the cast may fail only with \emph{negative} blame, placing the
+blame on the implicit-language context. For example, if the $A$
+is a function type with a non-null domain type, the cast could fail if the surrounding
+implicit context invokes the function with a null argument.
+The cast cannot fail with positive blame because
+$A$ is a naive subtype of $\typofityp{\itypoftyp{A}}$:
+\begin{lemma}
+    For every implicit type $\hat{A}$, $\subtypn{A}{\typofityp{\itypoftyp{A}}}$.
+\end{lemma}
+\TODO{prove here and in Coq}
+Then by the Tangram Lemma, 
+$\subtyppos{A}{\typofityp{\itypoftyp{A}}}$,
+so a term containing this form of cast is safe for $\blei$,
+so it cannot reduce to $\blame{\blei}$.

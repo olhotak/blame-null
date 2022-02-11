@@ -116,6 +116,11 @@ steps.
     By straightforward induction on the derivation of $\red{N}{\blame{q}}$.
 \end{proof}
 
+\begin{theorem}[Blame Safety]
+    If $\typing{}{N}{A}$, $\sfor{N}{p}$, and $\redst{N}{\blame{q}}$, then $p \neq q$.
+\end{theorem}
+\TODO{proof here and in Coq}
+
 \subsection{Naive Subtyping and the Tangram Lemma\label{sec:tangram}}
 
 Naive subtyping relates types according to how \emph{definite} they are
@@ -127,16 +132,16 @@ type $D?$ appearing in a program might be intended to mean either a non-nullable
 type $D$ or a nullable type $D?$; the distinction would be expressible using these
 more definite types in a language with explicit nulls.
 
-\TODO{I'm not entirely sure about the following paragraph.}
-\TODO{PLW: I suggest deleting the paragraph, and leaving this
-  discussion for the section on implicit and explicit languages}
-Naive subtyping
-corresponds to the situation when types from a language with explicit nulls (such
-as Scala) are approximated using types in a language with implicit nulls (such as Java),
-or conversely, when a compiler for a language with explicit nulls needs to understand
-types that it reads from code in a language with implicit nulls.
-The implementation of the Scala 3 compiler uses naive subtyping to translate types
-from Java code into its own Scala internal representation.
+% \TODO{I'm not entirely sure about the following paragraph.}
+% \TODO{PLW: I suggest deleting the paragraph, and leaving this
+%   discussion for the section on implicit and explicit languages}
+% Naive subtyping
+% corresponds to the situation when types from a language with explicit nulls (such
+% as Scala) are approximated using types in a language with implicit nulls (such as Java),
+% or conversely, when a compiler for a language with explicit nulls needs to understand
+% types that it reads from code in a language with implicit nulls.
+% The implementation of the Scala 3 compiler uses naive subtyping to translate types
+% from Java code into its own Scala internal representation.
 
 The Tangram Lemma of \citet{DBLP:conf/esop/WadlerF09} relates these four subtyping
 relations. We show that it holds for the specific relations defined in \Cref{fig:subtyping}.
@@ -159,4 +164,5 @@ relations. We show that it holds for the specific relations defined in \Cref{fig
 
 \TODO{Explain the practical consequence of the Tangram Lemma for the Scala/Java case.}
 
-\TODO{PLW: Explain the grayed out portions of Figure 4, or remove them.}
+% \TODO{PLW: Explain the grayed out portions of Figure 4, or remove them.}
+% OL: I've removed the shading. It did not have any semantic meaning other than to draw attention to certain details.

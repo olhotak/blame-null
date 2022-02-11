@@ -5,14 +5,16 @@
 \newcommand{\binop}[2]{#1 \oplus #2}
 \newcommand{\lift}[1]{\lbrack #1 \rbrack}
 \newcommand{\abs}[3]{\lambda #1:#2.#3}
+\newcommand{\absP}[3]{\left(\abs{#1}{#2}{#3}\right)}
 \newcommand{\app}[2]{#1\ #2}
-\newcommand{\appP}[2]{(\app{#1}{#2})}
+\newcommand{\appP}[2]{\left(\app{#1}{#2}\right)}
 \newcommand{\cast}[4]{#1:#2 \Longrightarrow^{#3} #4}
-\newcommand{\castP}[4]{(\cast{#1}{#2}{#3}{#4})}
+\newcommand{\castP}[4]{\left(\cast{#1}{#2}{#3}{#4}\right)}
 \newcommand{\nil}{\code{null}}
 \newcommand{\case}[4]{\code{case}\ #1\ \code{of}\ \lbrace\nil\mapsto#2; \lift{#3}\mapsto#4\rbrace}
 \newcommand{\blame}[1]{\code{blame}\ #1}
 \newcommand{\arrow}[2]{#1\to#2}
+\newcommand{\arrowP}[2]{\left(\arrow{#1}{#2}\right)}
 
 \newcommand{\typing}[3]{#1\vdash#2:#3}
 \newcommand{\typingG}[2]{\typing{\Gamma}{#1}{#2}}
@@ -20,6 +22,7 @@
 \newcommand{\compat}[2]{#1\sim #2}
 
 \newcommand{\red}[2]{#1 \longrightarrow #2}
+\newcommand{\redst}[2]{#1 \longrightarrow^* #2}
 \newcommand{\subst}[3]{#1 [#2\mapsto#3]}
 
 \newcommand{\subtyp}[2]{#1 <: #2}
@@ -27,9 +30,11 @@
 \newcommand{\subtyppos}[2]{#1 <:^+ #2}
 \newcommand{\subtypneg}[2]{#1 <:^- #2}
 
-\newcommand{\etrm}[1]{\lceil#1\rceil}
-\newcommand{\itrm}[1]{\lfloor#1\rfloor}
-\newcommand{\typofityp}[1]{\llbracket#1\rrbracket}
+\newcommand{\etrm}[1]{\left\lceil#1\right\rceil}
+\newcommand{\itrm}[1]{\left\lfloor#1\right\rfloor}
+\newcommand{\typofityp}[1]{\left\llbracket#1\right\rrbracket}
+\newcommand{\typofitypn}[1]{\llfloor #1 \rrfloor}
+\newcommand{\itypoftyp}[1]{\llceil#1\rrceil}
 \newcommand{\trmofitrm}[1]{\llbracket#1\rrbracket}
 \newcommand{\ctxofictx}[1]{\llbracket#1\rrbracket}
 \newcommand{\trmofetrm}[1]{\llparenthesis#1\rrparenthesis}
@@ -38,10 +43,12 @@
 
 \newcommand{\elvisop}{\mathrel{\code{{?}{:}}}}
 \newcommand{\elvis}[2]{#1 \elvisop #2}
-\newcommand{\elvisP}[2]{(\elvis{#1}{#2})}
+\newcommand{\elvisP}[2]{\left(\elvis{#1}{#2}\right)}
 
 \newcommand{\blop}{\mathit{op}}
 \newcommand{\blderef}{\mathit{deref}}
+\newcommand{\blie}{\mathit{ie}}
+\newcommand{\blei}{\mathit{ei}}
 
 \newcommand{\coq}[1]{(\text{Coq: }\texttt{#1})}
 

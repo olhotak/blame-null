@@ -26,7 +26,7 @@
     {\subtypn{D?}{E?}}
 
     \infrule[Naive-Arrow]
-    {\shaded{\subtypn{A}{A'}} \andalso \subtypn{B}{B'}}
+    {\subtypn{A}{A'} \andalso \subtypn{B}{B'}}
     {\subtypn{\arrow{A}{B}}{\arrow{A'}{B'}}}
 
     \infax[Positive-Base]
@@ -41,7 +41,7 @@
     {\subtyppos{D?}{E?}}
 
     \infrule[Positive-Arrow]
-    {\shaded{\subtypneg{A'}{A}} \andalso \subtyppos{B}{B'}}
+    {\subtypneg{A'}{A} \andalso \subtyppos{B}{B'}}
     {\subtyppos{\arrow{A}{B}}{\arrow{A'}{B'}}}
 
     \infax[Negative-Base]
@@ -56,7 +56,7 @@
     {\subtypneg{D?}{E?}}
 
     \infrule[Negative-Arrow]
-    {\shaded{\subtyppos{A'}{A}} \andalso \subtypneg{B}{B'}}
+    {\subtyppos{A'}{A} \andalso \subtypneg{B}{B'}}
     {\subtypneg{\arrow{A}{B}}{\arrow{A'}{B'}}}
 
   \caption{Subtyping rules of null blame calculus}\label{fig:subtyping}
