@@ -4,7 +4,7 @@
 
 We have proven type safety of the calculus following the syntactic approach of \citet{DBLP:journals/iandc/WrightF94}.
 
-\begin{theorem}[Preservation]
+\begin{theorem}[Preservation\label{thm:preservation}]
     \coq{preservation}\\
     If $\typingG{N}{A}$ and $\red{N}{M}$, then
     either $M = \blame{p}$ for some $p$ or $\typingG{M}{A}$.
@@ -89,7 +89,7 @@ With this definition, we can prove blame safety of the calculus, that
 when $\sfor{N}{p}$, $N$ cannot reduce to $\blame{p}$ in any number of
 steps.
 
-\begin{theorem}[Safe Term Preservation]
+\begin{theorem}[Safe Term Preservation\label{thm:sfor-preservation}]
     \coq{sfor\_preservation}\\
     If $\typingG{N}{A}$, $\sfor{N}{p}$, and $\red{N}{M}$, then $\sfor{M}{p}$.
 \end{theorem}
@@ -108,18 +108,21 @@ steps.
     By straightforward induction on the structure of $N$.
 \end{proof}
 
-\begin{theorem}[Safe Term Progress]
+\begin{corollary}[Safe Term Progress\label{thm:sfor-progress}]
     \coq{sfor\_progress}\\
     If $\typing{}{N}{A}$, $\sfor{N}{p}$, and $\red{N}{\blame{q}}$, then $p \neq q$.
-\end{theorem}
+\end{corollary}
 \begin{proof}
-    By straightforward induction on the derivation of $\red{N}{\blame{q}}$.
+    This follows directly from \Cref{thm:sfor-preservation} and the definition of \textsf{safe}.
 \end{proof}
 
 \begin{theorem}[Blame Safety]
     If $\typing{}{N}{A}$, $\sfor{N}{p}$, and $\redst{N}{\blame{q}}$, then $p \neq q$.
 \end{theorem}
-\TODO{proof here and in Coq}
+\begin{proof}
+    The proof is by induction on the transitive reduction relation. In the
+    inductive case, it uses \Cref{thm:preservation,thm:sfor-preservation}.
+\end{proof}
 
 \subsection{Naive Subtyping and the Tangram Lemma\label{sec:tangram}}
 

@@ -120,7 +120,9 @@ $\typofityp{\hat{A}}$:
 \begin{lemma}
     For every implicit type $\hat{A}$, $\subtypn{\typofitypn{\hat{A}}}{\typofityp{\hat{A}}}$.
 \end{lemma}
-\TODO{prove here and in Coq}
+\begin{proof}
+    The proof is by straightforward induction on the structure of $\hat{A}$.
+\end{proof}
 Then by the Tangram Lemma, $\subtypneg{\typofityp{\hat{A}}}{\typofitypn{\hat{A}}}$,
 so a term containing this form of cast is safe for $\overline{\blie}$,
 so it cannot reduce to $\blame{\overline{\blie}}$.
@@ -166,9 +168,11 @@ implicit context invokes the function with a null argument.
 The cast cannot fail with positive blame because
 $A$ is a naive subtype of $\typofityp{\itypoftyp{A}}$:
 \begin{lemma}
-    For every implicit type $\hat{A}$, $\subtypn{A}{\typofityp{\itypoftyp{A}}}$.
+    For every explicit type $A$, $\subtypn{A}{\typofityp{\itypoftyp{A}}}$.
 \end{lemma}
-\TODO{prove here and in Coq}
+\begin{proof}
+    The proof is by straightforward induction on the structure of $A$.
+\end{proof}
 Then by the Tangram Lemma, 
 $\subtyppos{A}{\typofityp{\itypoftyp{A}}}$,
 so a term containing this form of cast is safe for $\blei$,
