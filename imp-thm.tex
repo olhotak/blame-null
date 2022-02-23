@@ -33,7 +33,7 @@ of terms $\hat{N}$ in the implicit sublanguage and terms $N$ in the explicit sub
 \begin{theorem}[Translation Preserves Typing\label{thm:translationtyping}]
     \coq{desugaring\_typing}
     \begin{enumerate}
-        \item If $\typing{\Gamma}{\hat{N}}{\hat{A}}$, then
+        \item If $\typingi{\Gamma}{\hat{N}}{\hat{A}}$, then
             $\typing{\ctxofictx{\Gamma}}{\trmofitrm{\hat{N}}}{\typofityp{\hat{A}}}$.
         \item If $\typing{\Gamma}{N}{A}$ (according to the typing rules of \Cref{fig:imptyping}), then
             $\typing{\ctxofictx{\Gamma}}{\trmofetrm{N}}{A}$ (according to the typing rules of \Cref{fig:typing}).
@@ -41,7 +41,7 @@ of terms $\hat{N}$ in the implicit sublanguage and terms $N$ in the explicit sub
 \end{theorem}
 \begin{proof}
     The proof is by mutual induction on the derivations of the typings
-        $\typing{\Gamma}{\hat{N}}{\hat{A}}$
+        $\typingi{\Gamma}{\hat{N}}{\hat{A}}$
         and
         $\typing{\ctxofictx{\Gamma}}{\trmofetrm{N}}{A}$.
         The \rn{Abs}, \rn{Case}, and \rn{Imp-Abs} rules are each parameterized by an
@@ -110,6 +110,7 @@ Thus, given a term $\hat{N}$ of type $\hat{A}$ in the implicit
 language, we can use it directly in the explicit language if we
 embed it using the following cast:
 $$\cast{\itrm{\hat{N}}}{\typofityp{\hat{A}}}{\blie}{\typofitypn{\hat{A}}}$$
+Here, $\blie$ stands for a cast from the implicit language to the explicit language.
 
 This is convenient but unsafe, since the cast could fail. However,
 the cast can fail only with positive blame, blaming the implicit language
@@ -159,6 +160,7 @@ determined as follows:
 Then \emph{any} explicit term $M$ of \emph{any} explicit type $A$ can be embedded
 in the implicit language using the following cast:
 $$\etrm{\cast{M}{A}{\blei}{\typofityp{\itypoftyp{A}}}}$$
+Here, $\blei$ stands for a cast from the explicit language to the implicit language.
 
 Again, this is convenient but unsafe, since the cast may fail.
 However, the cast may fail only with \emph{negative} blame, placing the

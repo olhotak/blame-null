@@ -19,6 +19,9 @@
 \newcommand{\typing}[3]{#1\vdash#2:#3}
 \newcommand{\typingG}[2]{\typing{\Gamma}{#1}{#2}}
 
+\newcommand{\typingi}[3]{#1\;\hat{\vdash}\;#2:#3}
+\newcommand{\typingiG}[2]{\typingi{\Gamma}{#1}{#2}}
+
 \newcommand{\compat}[2]{#1\sim #2}
 
 \newcommand{\red}[2]{#1 \longrightarrow #2}
@@ -30,14 +33,23 @@
 \newcommand{\subtyppos}[2]{#1 <:^+ #2}
 \newcommand{\subtypneg}[2]{#1 <:^- #2}
 
-\newcommand{\etrm}[1]{\left\lceil#1\right\rceil}
-\newcommand{\itrm}[1]{\left\lfloor#1\right\rfloor}
-\newcommand{\typofityp}[1]{\left\llbracket#1\right\rrbracket}
-\newcommand{\typofitypn}[1]{\llfloor #1 \rrfloor}
-\newcommand{\itypoftyp}[1]{\llceil#1\rrceil}
-\newcommand{\trmofitrm}[1]{\llbracket#1\rrbracket}
-\newcommand{\ctxofictx}[1]{\llbracket#1\rrbracket}
-\newcommand{\trmofetrm}[1]{\llparenthesis#1\rrparenthesis}
+% \newcommand{\etrm}[1]{\left\lceil#1\right\rceil}
+% \newcommand{\itrm}[1]{\left\lfloor#1\right\rfloor}
+\newcommand{\etrm}[1]{#1}
+\newcommand{\itrm}[1]{#1}
+
+%\newcommand{\typofityp}[1]{\left\llbracket#1\right\rrbracket}
+\newcommand{\typofityp}[1]{\left\lvert#1\right\rvert}
+\newcommand{\typofitypn}[1]{\lfloor #1 \rfloor}
+\newcommand{\itypoftyp}[1]{\lceil#1\rceil}
+%\newcommand{\trmofitrm}[1]{\llbracket#1\rrbracket}
+\newcommand{\trmofitrm}[1]{\lvert#1\rvert}
+%\newcommand{\ctxofictx}[1]{\llbracket#1\rrbracket}
+\newcommand{\ctxofictx}[1]{\lvert#1\rvert}
+% \newcommand{\trmofetrm}[1]{\llparenthesis#1\rrparenthesis}
+%\newcommand{\trmofetrm}[1]{\llbracket#1\rrbracket}
+\newcommand{\trmofetrm}[1]{\lvert#1\rvert}
+% \newcommand{\trmofetrm}[1]{#1}
 
 \newcommand{\shaded}[1]{\colorbox{lightgray}{$\displaystyle #1$}}
 

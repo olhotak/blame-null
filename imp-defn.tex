@@ -78,8 +78,8 @@ are also types of the core calculus, so no translation is needed.
 
 In the translation of terms of the implicit sublanguage, we will
 make frequent use of pattern matching. We introduce as shorthand
-an Elvis operator $\elvis{M}{p}$ that takes a term $M$ of nullable type $D?$,
-and evaluates to $\blame{p}$ when $M$ evaluates to $\code{null}$
+an Elvis operator $\elvis{M}{N}$ that takes a term $M$ of nullable type $D?$
+and reduces to $N$ when $M$ evaluates to $\code{null}$
 and to $V$ when $M$ evaluates to $\lift{V}$.
 
 Variable references and the null constant are just translated to
@@ -96,9 +96,9 @@ application $\app{\hat{N}}{\hat{M}}$ first checks whether $\hat{N}$
 (the function) evaluates to null before evaluating the argument
 $\hat{M}$ and performing the application.
 
-An explicit language term $M$ embedded as $\etrm{M}$ in the implicit
-language is translated to $\trmofetrm{M}$, where $\trmofetrm{\cdot}$
-is a translation that leaves explicit language terms mostly unchanged,
-except to apply the implicit term translation function $\trmofitrm{\cdot}$
-when the explicit term is an embedding $\itrm{\hat{M}}$ of an implicit term
-$\hat{M}$.
+% An explicit language term $M$ embedded as $\etrm{M}$ in the implicit
+% language is translated to $\trmofetrm{M}$, where $\trmofetrm{\cdot}$
+% is a translation that leaves explicit language terms mostly unchanged,
+% except to apply the implicit term translation function $\trmofitrm{\cdot}$
+% when the explicit term is an embedding $\itrm{\hat{M}}$ of an implicit term
+% $\hat{M}$.
