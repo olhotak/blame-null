@@ -2,7 +2,7 @@
 
 \subsection{Type Safety}
 
-We have proven type safety of the calculus following the syntactic approach of \citet{DBLP:journals/iandc/WrightF94}.
+We have proven type safety of the explicit language following the syntactic approach of \citet{DBLP:journals/iandc/WrightF94}.
 
 \begin{theorem}[Preservation\label{thm:preservation}]
     \coq{preservation}\\
@@ -57,11 +57,11 @@ We have proven type safety of the calculus following the syntactic approach of \
 
 In addition to type safety, we have also proved blame safety following directly
 the approach of \citet{DBLP:conf/esop/WadlerF09} (see also \citet{DBLP:conf/snapl/Wadler15} for a more accessible summary of the approach). The applicability of this standard
-approach is one of the benefits of the calculus relative to the calculus of
+approach is one of the benefits of the explicit language relative to the calculus of
 \citet{DBLP:conf/ecoop/NietoRRL19}.
 
 The approach depends on four subtyping relations, defined for the
-calculus in \Cref{fig:subtyping}.  Intuitively, a cast between types
+explicit language in \Cref{fig:subtyping}.  Intuitively, a cast between types
 related by positive subtyping cannot give rise to positive blame
 (blame with the same label as the cast) and a cast between types
 related by negative subtyping cannot give rise to negative blame
@@ -85,7 +85,7 @@ We make the intuitive understanding of positive and negative subtyping precise a
     satisfies $\subtypneg{A}{B}$.
 \end{definition}
 
-With this definition, we can prove blame safety of the calculus, that
+With this definition, we can prove blame safety of the explicit language, that
 when $\sfor{N}{p}$, $N$ cannot reduce to $\blame{p}$ in any number of
 steps.
 

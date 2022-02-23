@@ -1,41 +1,67 @@
 \section{An Implicitly Nullable Language\label{sec:impdefn}}
 
-Having defined a core calculus with casts, we now extend it to
-model the interaction of two languages, one with explicit nulls (like Scala)
-and one with implicit nulls (like Java). To do this, \citet{DBLP:conf/ecoop/NietoRRL19}
+Having defined an explicit language with casts (like Scala), we now extend it 
+with an implicit language that ignores nullability in its types (like Java).
+Terms of the implicit language can be embedded within terms of the explicit language
+and vice versa.
+Previously, \citet{DBLP:conf/ecoop/NietoRRL19}
 defined two new calculi with translations to a third core calculus.
-Instead, we reuse our core calculus directly as the language with
-explicit nulls, and define a more restricted form of it as the language
-with implicit nulls.
+In contrast, we reuse the explicit language from the previous sections directly,
+and just add a new implicit language.
 
 \subsection{Syntax}
 
-The syntax of the two-language calculus is defined in \Cref{fig:impsyntax}.
-The terms $L, M, N$ of the explicit sublanguage are just those of the core calculus
-from \Cref{fig:syntax}, extended with $\itrm{\hat{M}}$, 
-an embedding of a term $\hat{M}$ of the implicit sublanguage within a term
-of the explicit sublanguage. In general, we use a $\hat{\text{hat}}$ to mark elements of the implicit sublanguage.
+The combined syntax of the explicit and implicit languages is defined in \Cref{fig:impsyntax}.
+The terms $L, M, N$ of the explicit language are
+those defined previously in \Cref{fig:syntax}, extended with $\itrm{\hat{M}}$, 
+an embedding of a term $\hat{M}$ of the implicit language.
+In general, we use a $\hat{\text{hat}}$ to mark elements of the implicit language.
 
 \input{fig/impsyntax}
 
-The syntax of terms of the implicit sublanguage $\hat{L}, \hat{M}, \hat{N}$
-mirrors the core calculus, but omits lifting, pattern matching, casts, and blame,
+The syntax of terms of the implicit language $\hat{L}, \hat{M}, \hat{N}$
+mirrors that of the explicit language, but omits lifting, pattern matching, casts, and blame,
 since those are useless without the distinction between nullable and non-null
-types. The implicit sublanguage also allows $\etrm{M}$, an embedding of a
-term of the explicit sublanguage inside a term of the implicit sublanguage.
+types. We also allow a term $\etrm{M}$ of the explicit language to be embedded
+within a term of the implicit language.
 
 
-Types $\hat{A}, \hat{B}, \hat{C}$ of the implicit sublanguage are not distinguished
-as nullable or non-null. All types in the implicit sublanguage admit the null constant.
+Types $\hat{A}, \hat{B}, \hat{C}$ of the implicit language are not distinguished
+as nullable or non-null. All types in the implicit language admit the null constant.
+We define a translation of implicit language types to nullable types in the explicit language
+as follows:
+\begin{align*}
+\typofityp{\iota} &= \iota?\\
+\typofityp{\arrow{\hat{A}}{\hat{B}}} &= \arrowP{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}?\\
+\end{align*}
+The translated types are equivalent in that they admit equivalent sets
+of values: in particular, the translated types admit the null constant.
+
+\TODO{Consider changing the notation for types from the implicit
+    language to write them \emph{always} with question marks: $\iota?$ and
+    $\arrowP{A}{B}?$.
+}
+
+
 
 \subsection{Typing}
 
-The typing rules of the two-language calculus extend those of the core calculus
-from \Cref{fig:typing} for typing terms of the explicit sublanguage with
-one new rule for embedded implicit terms, as shown in \Cref{fig:imptyping}.
-The typing rules for terms of the implicit sublanguage are also shown
-in \Cref{fig:imptyping}; they are standard except for the \rn{Imp-Exp}
-rule for explicit-sublanguage terms embedded in the implicit sublanguage.
+The typing rules of the explicit language from \Cref{fig:typing} remain the
+same, but one new rule \rn{Imp} is added for typing a term $\hat{M}$ of the implicit
+language embedded in the explicit language, as shown in \Cref{fig:imptyping}.
+Since a term of the explicit language can be an embedded term of the implicit
+language and vice versa, we distinguish a second typing relation $\typingi{\cdot}{\cdot}{\cdot}$
+for typing in the implicit language. Thus, the \rn{Imp} typing rule says that
+if an implicit term $\hat{M}$ has type $\hat{A}$ in the implicit language,
+then when it is embedded in the explicit language, it is considered in the
+explicit language to have the type $\trmofitrm{\hat{A}}$.
+
+The typing rules of the implicit sublanguage are also shown
+in \Cref{fig:imptyping}. They are standard except for the \rn{Imp-Exp}
+rule, which says that a term $M$ of the explicit language can be
+embedded in the implicit language if its type $\trmofitrm{\hat{A}}$
+in the explicit language is the image under the translation of some type $\hat{A}$ of
+the implicit language.
 
 \input{fig/imptyping}
 
@@ -44,7 +70,7 @@ with an unmodified typing context $\Gamma$. This is in contrast to
 \citet{DBLP:conf/ecoop/NietoRRL19}, where the typing rules for similar embedding
 constructs require the embedded term to be typed in an empty context,
 prohibiting an embedded term to refer to free variables defined outside
-of it. To lift this restriction, we define typing contexts $\Gamma$
+of it. To lift this restriction, we allow a typing context $\Gamma$
 to contain two forms of bindings, bindings with explicit types
 $x:A$ and bindings with implicit types $x:\hat{A}$. A variable
 bound to an explicit (respectively implicit) type can only be used
@@ -61,20 +87,11 @@ which would not be allowed in the system of \citet{DBLP:conf/ecoop/NietoRRL19}.
 
 \subsection{Semantics}
 
-We define the semantics of the two-language calculus as a translation
-into the core calculus from \Cref{sec:defn}. The translation is
-presented in \Cref{fig:translation}.
+We define the semantics of the implicit language by translation
+to the explicit language, whose operational semantics we define in
+\Cref{sec:defn}. The translation is presented in \Cref{fig:translation}.
 
 \input{fig/translation}
-
-Types $\hat{A}, \hat{B}, \hat{C}$ from the implicit sublanguage
-admit null, so they are translated to the corresponding nullable
-types of the core calculus. Types $A,B,C$ from the explicit sublanguage
-are also types of the core calculus, so no translation is needed.
-\TODO{Consider changing the notation for types from the implicit
-    language to write them \emph{always} with question marks: $\iota?$ and
-    $\arrowP{A}{B}?$.
-}
 
 In the translation of terms of the implicit sublanguage, we will
 make frequent use of pattern matching. We introduce as shorthand
@@ -95,6 +112,10 @@ base operation failed. Similarly, the translation of a function
 application $\app{\hat{N}}{\hat{M}}$ first checks whether $\hat{N}$
 (the function) evaluates to null before evaluating the argument
 $\hat{M}$ and performing the application.
+An explicit language term embedded in the implicit language is
+just translated to itself, except that and implicit language terms
+further embedded within the embedded explicit language term are transformed
+using the translation.
 
 % An explicit language term $M$ embedded as $\etrm{M}$ in the implicit
 % language is translated to $\trmofetrm{M}$, where $\trmofetrm{\cdot}$

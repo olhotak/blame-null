@@ -1,24 +1,29 @@
 \section{Properties}
 
-In this section, we show two important properties of the two-sublanguage calculus.
-First, we show that the translation defined in the previous section
-preserves typing: if a term in the implicit sublanguage or the explicit
-sublanguage can be typed using the rules from \Cref{fig:imptyping}, then
-the corresponding term translated to the core calculus can also be given
-the corresponding type.
-Second, we show a form of blame safety, that the only way in which a
-term in the range of the translation can fail is due to one of the
-null checks in the implicit language.
+In this section, we show two important properties about the interaction
+of the explicit and implicit languages.
+First, we show that the translation of implicit terms defined in the previous section
+preserves typing: if a term 
+% in the implicit sublanguage or the explicit
+% sublanguage
+can be typed using the rules from \Cref{fig:imptyping}, then
+its translation is an explicit language term that can be typed using
+the rules from \Cref{fig:typing}.
+Second, we will show a form of blame safety.
+We define casts that enable terms of the implicit language to be
+used conveniently in the explicit language, and vice versa, and
+we show that if one of these casts ever fails, the blame is always
+assigned to the implicit language.
 
 \subsection{Type Preservation of the Translation}
 
-Recall that typing contexts $\Gamma$ for the two-sublanguage calculus bind
+Recall that we extended typing contexts $\Gamma$ to bind
 each variable either to a type $\hat{A}$ in the implicit sublanguage or to
-a type $A$ in the explicit sublanguage, but typing contexts $\Gamma$ in the core
-calculus bind each variable to a type $A$ in the core calculus. Therefore,
+a type $A$ in the explicit sublanguage. However, the original typing rules of the
+explicit language from \Cref{fig:typing} are defined in terms of typing contexts
+$\Gamma$ that bind variables only to explicit language types $A$. Therefore,
 in order to state the theorem that the translation preserves types, we must
-first define a translation from typing contexts for the two-sublanguage
-calculus to typing contexts for the core calculus:
+first define a translation of typing contexts:
 
 \begin{definition}[Translation of Typing Contexts]
     \coq{ctx\_of\_ictx}\\
@@ -43,12 +48,13 @@ of terms $\hat{N}$ in the implicit sublanguage and terms $N$ in the explicit sub
     The proof is by mutual induction on the derivations of the typings
         $\typingi{\Gamma}{\hat{N}}{\hat{A}}$
         and
-        $\typing{\ctxofictx{\Gamma}}{\trmofetrm{N}}{A}$.
+        $\typing{\Gamma}{N}{A}$.
         The \rn{Abs}, \rn{Case}, and \rn{Imp-Abs} rules are each parameterized by an
         arbitrary fresh variable $x$, so the cases for these rules require to prove
         a conclusion that holds for \emph{any} such fresh $x$. To do so, we need to
-        show that the translation functions $\trmofitrm{\cdot}$
-        and $\trmofetrm{\cdot}$ commute with $\alpha$ renaming of variables.
+        show that the translation function $\trmofitrm{\cdot}$
+        %and $\trmofetrm{\cdot}$
+        commutes with $\alpha$-renaming of variables.
         In fact, we prove a stronger result, that these
         two functions commute with substitution of an arbitrary term for a
         free variable, which we show below in \Cref{lem:substcommutes}.
@@ -70,19 +76,19 @@ of terms $\hat{N}$ in the implicit sublanguage and terms $N$ in the explicit sub
 
 \subsection{Interoperability}
 
-The two-sublanguage calculus allows an implicit language term to be used in the
-explicit language, but with an inconvenient type, so it cannot be used directly.
+The explicit language allows embedded implicit language terms, but with inconvenient
+types, so they cannot be used directly.
 For example, the constant term 
-$\itrm{\hat{c}}$ has the nullable type $\iota?$, so it cannot be an operand of
-the $\oplus$ operator, which requires operands of type $\iota$. Similarly,
+$\itrm{\hat{c}}$ embedded in the explicit language has the nullable type $\iota?$, so it cannot be an operand of
+the explicit language $\oplus$ operator, which requires operands of type $\iota$. Similarly,
 the constant function term $\itrm{\abs{x}{\hat{A}}{\hat{N}}}$ has the nullable type
-$\arrowP{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}?$
+$\arrowP{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}?$ in the explicit language
 (where $\hat{B}$
 is a type of the body $\hat{N}$), so it cannot be used directly in a function
 application.
 
-One obviously safe solution is to explicitly handle the possibility of
-an implicit-language subterm evaluating to null using the \code{case}
+One safe solution is to explicitly handle the possibility of
+an implicit language subterm evaluating to null using the \code{case}
 construct. In $\case{\itrm{\hat{c}}}{N}{x}{M}$, the constant $\hat{c}$
 is available in $M$ through the variable $x$ with the convenient type $\iota$.
 More complicated types require additional pattern matching. For example,
@@ -92,11 +98,12 @@ from one of nullable type
 $\arrowP{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}?$,
 but additional lifts and pattern matching are required to
 deal with the remaining nullable types $\typofityp{\hat{A}}$ and $\typofityp{\hat{B}}$.
-Although inconvenient, this approach is safe: if we do not use
-any casts, there are no casts that could fail (except for the null checks
-$\blop$ and $\blderef$ associated with operations in the implicit sublanguage).
+Although inconvenient, this approach is safe: if use only pattern matches
+but no casts, then there are no casts that could fail.
+% (except for the null checks
+% $\blop$ and $\blderef$ associated with operations in the implicit sublanguage).
 
-If we are confident that the implicit-language subterm will not evaluate to
+If we are confident that the implicit language subterm will not evaluate to
 null, a more convenient approach is to cast it to a more suitable type.
 We define a \emph{naive} translation of implicit types as follows:
 \begin{align*}
@@ -131,15 +138,16 @@ so it cannot reduce to $\blame{\overline{\blie}}$.
 
 Conversely, it is possible to use a term of the explicit language in
 the implicit language, but we must again adapt the types. According to the
-typing rule \rn{Imp-Exp}, an embedding $\etrm{M}$ can be typed only if the
-explicit language term $M$ has a type $\typofityp{\hat{A}}$ that is the
+typing rule \rn{Imp-Exp}, an embedded explicit language term $\etrm{M}$ can be typed in
+the implicit language only if it
+has a type $\typofityp{\hat{A}}$ that is the
 image of some implicit language type $\hat{A}$ under the tranlation
 $\typofityp{\cdot}$ of implicit types. For an explicit term
 $N$ of base type $\iota$, this is easy to achieve using just lifting, since
 $\lift{N}$ has type $\iota? = \typofityp{\iota}$. For an explicit term of function type,
 however, ensuring that its type is the image of some implicit
 language type requires adjusting its domain and codomain types.
-Specifically, if the domain type of an explicit-language function
+Specifically, if the domain type of an explicit language function
 is a definite (non-null type), pattern matching needs to be added
 before applying the function to handle the case that the actual
 argument from the implicit language could be null.
@@ -148,9 +156,9 @@ in the implicit language without adding any casts, it may require
 adding multiple lifts and pattern matching, and is thus inconvenient.
 
 If we are confident about lack of null references, we can again
-use a cast to conveniently allow an explicit-language term of any
+use a cast to conveniently allow an explicit language term of any
 type to be embedded in the implicit language. To do so, we first define
-the \emph{erasure} of an explicit-language type to be the implicit-language type
+the \emph{erasure} of an explicit language type to be the implicit language type
 determined as follows:
 \begin{align*}
     \itypoftyp{D?} &= \itypoftyp{D} \\
@@ -164,7 +172,7 @@ Here, $\blei$ stands for a cast from the explicit language to the implicit langu
 
 Again, this is convenient but unsafe, since the cast may fail.
 However, the cast may fail only with \emph{negative} blame, placing the
-blame on the implicit-language context. For example, if the $A$
+blame on the implicit language context. For example, if the $A$
 is a function type with a non-null domain type, the cast could fail if the surrounding
 implicit context invokes the function with a null argument.
 The cast cannot fail with positive blame because

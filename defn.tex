@@ -1,13 +1,13 @@
 \section{The Simple Null Blame Calculus\label{sec:defn}}
-In this section, we introduce \TODO{Find a good name for this calculus and the two calculi in section 4.}
-a core calculus for a language that tracks nullability in types.
+In this section, we introduce a language that tracks the possibility of null references
+explicitly in types. We will call it the explicit language for short.
 We define the syntax, typing and subtyping rules, and a reduction relation.
 In \Cref{sec:thm}, we will prove standard type safety and blame safety properties.
-Later, in \Cref{sec:impdefn}, we will extend this calculus with additional
-terms that model a language in which null references are implicit, not tracked in the
-type system, to study the interaction of the two sublanguages.
+Later, in \Cref{sec:impdefn}, we will extend this explicit language with an
+implicit language that does not track the possibility of null references in types,
+to study the interaction of the two languages.
 
-The syntax of the calculus is shown in \Cref{fig:syntax}. The basic values
+The syntax of the explicit language is shown in \Cref{fig:syntax}. The basic values
 are constants $c$ of a base type $\iota$, function abstractions $\abs{x}{A}{N}$
 of a function type $\arrow{A}{B}$, and the null constant $\code{null}$.
 In addition to the two \emph{definite types} $\iota$ and $\arrow{A}{B}$,
@@ -30,7 +30,7 @@ indicating that the context in which the cast appears caused the cast to fail.
 
 \input{fig/syntax}
 
-The typing rules of the calculus are shown in \Cref{fig:typing}.
+The typing rules of the explicit language are shown in \Cref{fig:typing}.
 The rules for variables, base type constants and operations, and function
 abstraction and application are standard. The
 \rn{Null} and \rn{Lift} rules identify the null constant $\code{null}$ and the lift
@@ -44,7 +44,7 @@ destructs terms of a nullable type $D?$.
 
 \input{fig/typing}
 
-The operational semantics of the calculus is shown in \Cref{fig:reduction}.
+The operational semantics of the explicit language is shown in \Cref{fig:reduction}.
 The \rn{App} rule is standard $\beta$-reduction. 
 The \rn{Cast-App} rule defines $\beta$-reduction for a function wrapped
 in a cast, ensuring that that the argument $W$ and the final result of the

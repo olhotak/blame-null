@@ -3,7 +3,7 @@
 \newcommand{\p}{\quad|\enspace}
 
 \newcommand{\binop}[2]{#1 \oplus #2}
-\newcommand{\lift}[1]{\lbrack #1 \rbrack}
+\newcommand{\lift}[1]{\left\lbrack #1 \right\rbrack}
 \newcommand{\abs}[3]{\lambda #1:#2.#3}
 \newcommand{\absP}[3]{\left(\abs{#1}{#2}{#3}\right)}
 \newcommand{\app}[2]{#1\ #2}
@@ -19,7 +19,7 @@
 \newcommand{\typing}[3]{#1\vdash#2:#3}
 \newcommand{\typingG}[2]{\typing{\Gamma}{#1}{#2}}
 
-\newcommand{\typingi}[3]{#1\;\hat{\vdash}\;#2:#3}
+\newcommand{\typingi}[3]{#1\mathrel{\hat{\vdash}}#2:#3}
 \newcommand{\typingiG}[2]{\typingi{\Gamma}{#1}{#2}}
 
 \newcommand{\compat}[2]{#1\sim #2}
