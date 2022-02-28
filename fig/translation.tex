@@ -1,37 +1,21 @@
 \begin{figure}
-% \textbf{Translation of Implict Types}\\
-% \begin{align*}
-% \typofityp{\iota} &= \iota?\\
-% \typofityp{\arrow{\hat{A}}{\hat{B}}} &= \arrowP{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}?\\
-% \end{align*}
-\textbf{Elvis Operator Syntactic Sugar}\\
+\textbf{Translation of Implict Types}
 \begin{align*}
-\elvis{M}{N} &= \case{M}{N}{x}{x}
+\typofityp{\iota} &= \iota?\\
+\typofityp{\arrow{\hat{A}}{\hat{B}}} &= \arrowP{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}?\\
 \end{align*}
-\textbf{Translation of Implict Terms}\\
+\textbf{Elvis Operator Syntactic Sugar}
+\begin{align*}
+\elvis{M}{N} &= \case{M}{N}{x}{x}\\
+\end{align*}
+\textbf{Translation of Implict Terms}
 \begin{align*}
 \trmofitrm{\hat{x}} &= x\\
 \trmofitrm{\hat{\code{null}}} &= \code{null}\\
 \trmofitrm{\hat{c}} &= \lift{c}\\
 \trmofitrm{\binop{\hat{N}}{\hat{M}}} &= \lift{\binop{\elvisP{\trmofitrm{\hat{N}}}{\blame\blop}}{\elvisP{\trmofitrm{\hat{M}}}{\blame\blop}}} \\
 \trmofitrm{\abs{x}{\hat{A}}{\hat{N}}} &= \lift{\abs{x}{\typofityp{\hat{A}}}{\trmofitrm{\hat{N}}}} \\
-\trmofitrm{\app{\hat{N}}{\hat{M}}} &= \app{\elvisP{\trmofitrm{\hat{N}}}{\blame\blderef}}{\trmofitrm{\hat{M}}} \\
-% \trmofitrm{\etrm{M}} &= \trmofetrm{M}\\
-\trmofitrm{\etrm{M}} &= \text{$M$, with all implicit subterms $\hat{N}$ within $M$ translated using $\trmofitrm{\cdot}$}\\
+\trmofitrm{\app{\hat{N}}{\hat{M}}} &= \app{\elvisP{\trmofitrm{\hat{N}}}{\blame\blderef}}{\trmofitrm{\hat{M}}}\\
 \end{align*}
-% \textbf{Translation of Explicit Terms}\\
-% \begin{align*}
-% \trmofetrm{x} &= x\\
-% \trmofetrm{c} &= c\\
-% \trmofetrm{\binop{N}{M}} &= \binop{\trmofetrm{N}}{\trmofetrm{M}}\\
-% \trmofetrm{\code{null}} &= \code{null}\\
-% \trmofetrm{\lift{N}} &= \lift{\trmofetrm{N}}\\
-% \trmofetrm{\case{N}{M}{x}{L}} &= \case{\trmofetrm{N}}{\trmofetrm{M}}{x}{\trmofetrm{L}}\\
-% \trmofetrm{\abs{x}{A}{N}} &= \abs{x}{A}{\trmofetrm{N}}\\
-% \trmofetrm{\app{N}{M}} &= \app{\trmofetrm{N}}{\trmofetrm{M}}\\
-% \trmofetrm{\cast{M}{A}{p}{B}} &= \cast{\trmofetrm{M}}{A}{p}{B}\\
-% \trmofetrm{\blame{p}} &= \blame{p}\\
-% \trmofetrm{\itrm{\hat{M}}} &= \trmofitrm{\hat{M}} \\
-% \end{align*}
-  \caption{Translation of null blame calculus for sublanguages with explicit and implicit nulls into the base null blame calculus}\label{fig:translation}
+\caption{Translation from implicit language to explicit language}\label{fig:translation}
 \end{figure}

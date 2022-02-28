@@ -1,105 +1,71 @@
-\section{Properties}
-
-In this section, we show two important properties about the interaction
-of the explicit and implicit languages.
-First, we show that the translation of implicit terms defined in the previous section
-preserves typing: if a term 
-% in the implicit sublanguage or the explicit
-% sublanguage
-can be typed using the rules from \Cref{fig:imptyping}, then
-its translation is an explicit language term that can be typed using
-the rules from \Cref{fig:typing}.
-Second, we will show a form of blame safety.
-We define casts that enable terms of the implicit language to be
-used conveniently in the explicit language, and vice versa, and
-we show that if one of these casts ever fails, the blame is always
-assigned to the implicit language.
-
 \subsection{Type Preservation of the Translation}
 
-Recall that we extended typing contexts $\Gamma$ to bind
-each variable either to a type $\hat{A}$ in the implicit sublanguage or to
-a type $A$ in the explicit sublanguage. However, the original typing rules of the
-explicit language from \Cref{fig:typing} are defined in terms of typing contexts
-$\Gamma$ that bind variables only to explicit language types $A$. Therefore,
-in order to state the theorem that the translation preserves types, we must
-first define a translation of typing contexts:
-
-\begin{definition}[Translation of Typing Contexts]
-    \coq{ctx\_of\_ictx}\\
-    A typing context $\ctxofictx{\Gamma}$ is obtained by replacing
-    each binding of the form $x:\hat{A}$ in $\Gamma$ with $x:\typofityp{\hat{A}}$
-    and keeping each binding of the form $x:A$ unchanged.
-\end{definition}
-
-We can now formulate the type preservation theorem as follows, for typings
-of terms $\hat{N}$ in the implicit sublanguage and terms $N$ in the explicit sublanguage.
-
+The translation from the implicit language
+to the explicit language preserves typing:
 \begin{theorem}[Translation Preserves Typing\label{thm:translationtyping}]
     \coq{desugaring\_typing}
-    \begin{enumerate}
-        \item If $\typingi{\Gamma}{\hat{N}}{\hat{A}}$, then
-            $\typing{\ctxofictx{\Gamma}}{\trmofitrm{\hat{N}}}{\typofityp{\hat{A}}}$.
-        \item If $\typing{\Gamma}{N}{A}$ (according to the typing rules of \Cref{fig:imptyping}), then
-            $\typing{\ctxofictx{\Gamma}}{\trmofetrm{N}}{A}$ (according to the typing rules of \Cref{fig:typing}).
-    \end{enumerate}
+        If $\typingi{\Gamma}{\hat{N}}{\hat{A}}$, then
+            $\typing{\ctxofictx{\Gamma}}{\trmofitrm{\hat{N}}}{\typofityp{\hat{A}}}$,
+            where
+    a typing context $\ctxofictx{\Gamma}$ is obtained by replacing
+    each binding of the form $x:\hat{A}$ in $\Gamma$ with $x:\typofityp{\hat{A}}$.
 \end{theorem}
 \begin{proof}
-    The proof is by mutual induction on the derivations of the typings
-        $\typingi{\Gamma}{\hat{N}}{\hat{A}}$
-        and
-        $\typing{\Gamma}{N}{A}$.
-        The \rn{Abs}, \rn{Case}, and \rn{Imp-Abs} rules are each parameterized by an
-        arbitrary fresh variable $x$, so the cases for these rules require to prove
+    The proof is by induction on the derivation of
+        $\typingi{\Gamma}{\hat{N}}{\hat{A}}$.
+        The \rn{Imp-Abs} rule is parameterized by an
+        arbitrary fresh variable $x$, so the case for this rule requires to prove
         a conclusion that holds for \emph{any} such fresh $x$. To do so, we need to
         show that the translation function $\trmofitrm{\cdot}$
-        %and $\trmofetrm{\cdot}$
         commutes with $\alpha$-renaming of variables.
-        In fact, we prove a stronger result, that these
-        two functions commute with substitution of an arbitrary term for a
+        In fact, we prove a stronger result, that this
+        function commutes with substitution of an arbitrary term for a
         free variable, which we show below in \Cref{lem:substcommutes}.
         All other cases are straightforward.
 \end{proof}
 
 \begin{lemma}[Substitution Commutes With Translation\label{lem:substcommutes}]
-    \coq{open\_trm\_of\_ietrm}
-    \begin{enumerate}
+    \coq{open\_trm\_of\_itrm}
         \item $\trmofitrm{\subst{\hat{N}}{\hat{x}}{\hat{M}}} = \subst{\trmofitrm{\hat{N}}}{x}{\trmofitrm{\hat{M}}}$
-        \item $\trmofetrm{\subst{N}{x}{M}} = \subst{\trmofetrm{N}}{x}{\trmofetrm{M}}$
-    \end{enumerate}
 \end{lemma}
 \begin{proof}
-    The proof is by straightforward mutual induction on the structure of $\hat{N}$ and $N$.
+    The proof is by straightforward induction on the structure of $\hat{N}$.
 \end{proof}
 
+\section{Interoperability}
 
+In this section, we will explore how terms of the explicit language
+can use terms of the implicit language and vice versa.
 
-\subsection{Interoperability}
+\subsection{Implicit Terms within Explicit Terms}
 
-The explicit language allows embedded implicit language terms, but with inconvenient
-types, so they cannot be used directly.
-For example, the constant term 
-$\itrm{\hat{c}}$ embedded in the explicit language has the nullable type $\iota?$, so it cannot be an operand of
+To use a term $\hat{M}$ of the implicit language within the explicit
+language, we just translate the term first, and use
+$\trmofitrm{\hat{M}}$ within the explicit language.
+However, the translated term has an inconvenient type,
+so it cannot be used directly.
+For example, the translated implicit language constant term 
+$\trmofitrm{\hat{c}}$ has the nullable type $\iota?$, so it cannot be an operand of
 the explicit language $\oplus$ operator, which requires operands of type $\iota$. Similarly,
-the constant function term $\itrm{\abs{x}{\hat{A}}{\hat{N}}}$ has the nullable type
-$\arrowP{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}?$ in the explicit language
+the translated implicit language function term $\trmofitrm{\abs{x}{\hat{A}}{\hat{N}}}$ has the nullable type
+$\arrowP{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}?$
 (where $\hat{B}$
 is a type of the body $\hat{N}$), so it cannot be used directly in a function
 application.
 
 One safe solution is to explicitly handle the possibility of
 an implicit language subterm evaluating to null using the \code{case}
-construct. In $\case{\itrm{\hat{c}}}{N}{x}{M}$, the constant $\hat{c}$
+construct. In $\case{\trmofitrm{\hat{c}}}{N}{x}{M}$, the constant $\hat{c}$
 is available in $M$ through the variable $x$ with the convenient type $\iota$.
 More complicated types require additional pattern matching. For example,
-a $\code{case}$ term can extract a value of function type 
+a pattern match can extract a term of function type 
 $\arrow{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}$
 from one of nullable type
 $\arrowP{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}?$,
 but additional lifts and pattern matching are required to
 deal with the remaining nullable types $\typofityp{\hat{A}}$ and $\typofityp{\hat{B}}$.
-Although inconvenient, this approach is safe: if use only pattern matches
-but no casts, then there are no casts that could fail.
+Although inconvenient, this approach is safe: since it uses only pattern matches
+but no casts, there are no casts that could fail.
 % (except for the null checks
 % $\blop$ and $\blderef$ associated with operations in the implicit sublanguage).
 
@@ -111,17 +77,17 @@ We define a \emph{naive} translation of implicit types as follows:
 \typofitypn{\arrow{\hat{A}}{\hat{B}}} &= \arrow{\typofitypn{\hat{A}}}{\typofitypn{\hat{B}}}
 \end{align*}
 The naive translation maps a constant type of the implicit language
-to a constant type of the core language, and it maps a function type
+to a constant type of the core language and it maps a function type
 of the implicit language to a function type of the core language.
 Thus, given a term $\hat{N}$ of type $\hat{A}$ in the implicit
 language, we can use it directly in the explicit language if we
 embed it using the following cast:
-$$\cast{\itrm{\hat{N}}}{\typofityp{\hat{A}}}{\blie}{\typofitypn{\hat{A}}}$$
-Here, $\blie$ stands for a cast from the implicit language to the explicit language.
+$$\cast{\trmofitrm{\hat{N}}}{\typofityp{\hat{A}}}{\blie}{\typofitypn{\hat{A}}}$$
+Here, the blame label $\blie$ stands for a cast from the implicit language to the explicit language.
 
 This is convenient but unsafe, since the cast could fail. However,
 the cast can fail only with positive blame, blaming the implicit language
-subterm $\hat{N}$ rather than the surrounding explicit language context.
+subterm $\trmofitrm{\hat{N}}$ rather than the surrounding explicit language context.
 This is because 
 $\typofitypn{\hat{A}}$ is a naive subtype of
 $\typofityp{\hat{A}}$:
@@ -135,20 +101,32 @@ Then by the Tangram Lemma, $\subtypneg{\typofityp{\hat{A}}}{\typofitypn{\hat{A}}
 so a term containing this form of cast is safe for $\overline{\blie}$,
 so it cannot reduce to $\blame{\overline{\blie}}$.
 
+\subsection{Explicit Terms within Implicit Terms}
 
-Conversely, it is possible to use a term of the explicit language in
-the implicit language, but we must again adapt the types. According to the
-typing rule \rn{Imp-Exp}, an embedded explicit language term $\etrm{M}$ can be typed in
-the implicit language only if it
-has a type $\typofityp{\hat{A}}$ that is the
-image of some implicit language type $\hat{A}$ under the tranlation
-$\typofityp{\cdot}$ of implicit types. For an explicit term
-$N$ of base type $\iota$, this is easy to achieve using just lifting, since
-$\lift{N}$ has type $\iota? = \typofityp{\iota}$. For an explicit term of function type,
+It is also possible to embed an explicit language term within an implicit
+language term by applying the translation to the surrounding implicit term.
+The general pattern is $\code{let } x:A = M \code{ in } \trmofitrm{\hat{N}}$,
+which can be desugared as $\app{\absP{x}{A}{\trmofitrm{\hat{N}}}}{M}$.
+
+However, we must again adapt the types.
+Typing the implicit language term $\hat{N}$ requires a typing context
+that binds $x$ to some implicit language type $\hat{B}$. By
+\Cref{thm:translationtyping}, the translated term $\trmofitrm{\hat{N}}$
+can be typed in a translated context $\ctxofictx{\Gamma}$ that
+binds $x$ to $\typofityp{\hat{B}}$. Thus, the overall
+lambda abstraction $\app{\absP{x}{A}{\trmofitrm{\hat{N}}}}{M}$
+can be typed as long as there is some $\hat{B}$ such that
+$A = \typofityp{\hat{B}}$, in other words, as long as the
+explicit language type $A$ of $M$
+is the image of some implicit type $\hat{B}$ under the translation.
+
+For an explicit term
+$M$ of base type $\iota$, this is easy to achieve using just lifting, since
+$\lift{M}$ has type $\iota? = \typofityp{\iota}$. For an explicit term of function type,
 however, ensuring that its type is the image of some implicit
 language type requires adjusting its domain and codomain types.
 Specifically, if the domain type of an explicit language function
-is a definite (non-null type), pattern matching needs to be added
+is a definite (non-null) type, pattern matching needs to be added
 before applying the function to handle the case that the actual
 argument from the implicit language could be null.
 Although it is possible to use a term of the explicit language
@@ -165,14 +143,15 @@ determined as follows:
     \itypoftyp{\iota} &= \iota \\
     \itypoftyp{\arrow{A}{B}} &= \arrow{\itypoftyp{A}}{\itypoftyp{B}}
 \end{align*}
-Then \emph{any} explicit term $M$ of \emph{any} explicit type $A$ can be embedded
-in the implicit language using the following cast:
-$$\etrm{\cast{M}{A}{\blei}{\typofityp{\itypoftyp{A}}}}$$
-Here, $\blei$ stands for a cast from the explicit language to the implicit language.
+Then for any explicit type $A$, the translation of its erasure $\typofityp{\itypoftyp{A}}$ is the
+image of an implicit language type. Therefore, any explicit term $M$ of any explicit type $A$ can be embedded in an implicit language term $\hat{N}$ using the following pattern:
+$$\app{\absP{x}{\typofityp{\itypoftyp{A}}}{\trmofitrm{\hat{N}}}}{\castP{M}{A}{\blei}{\typofityp{\itypoftyp{A}}}}$$
+
+Here, the blame label $\blei$ stands for a cast from the explicit language to the implicit language.
 
 Again, this is convenient but unsafe, since the cast may fail.
 However, the cast may fail only with \emph{negative} blame, placing the
-blame on the implicit language context. For example, if the $A$
+blame on the implicit language context. For example, if the type $A$
 is a function type with a non-null domain type, the cast could fail if the surrounding
 implicit context invokes the function with a null argument.
 The cast cannot fail with positive blame because

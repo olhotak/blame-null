@@ -1,99 +1,48 @@
 \section{An Implicitly Nullable Language\label{sec:impdefn}}
 
-Having defined an explicit language with casts (like Scala), we now extend it 
-with an implicit language that ignores nullability in its types (like Java).
-Terms of the implicit language can be embedded within terms of the explicit language
-and vice versa.
-Previously, \citet{DBLP:conf/ecoop/NietoRRL19}
-defined two new calculi with translations to a third core calculus.
-In contrast, we reuse the explicit language from the previous sections directly,
-and just add a new implicit language.
+Having defined an explicit language with casts (like Scala), we now define
+an implicit language that ignores nullability in its types (like Java).
 
 \subsection{Syntax}
 
-The combined syntax of the explicit and implicit languages is defined in \Cref{fig:impsyntax}.
-The terms $L, M, N$ of the explicit language are
-those defined previously in \Cref{fig:syntax}, extended with $\itrm{\hat{M}}$, 
-an embedding of a term $\hat{M}$ of the implicit language.
+The syntax of implicit languages is defined in \Cref{fig:impsyntax}.
 In general, we use a $\hat{\text{hat}}$ to mark elements of the implicit language.
-
-\input{fig/impsyntax}
-
 The syntax of terms of the implicit language $\hat{L}, \hat{M}, \hat{N}$
 mirrors that of the explicit language, but omits lifting, pattern matching, casts, and blame,
 since those are useless without the distinction between nullable and non-null
-types. We also allow a term $\etrm{M}$ of the explicit language to be embedded
-within a term of the implicit language.
+types.
 
+\input{fig/impsyntax}
 
 Types $\hat{A}, \hat{B}, \hat{C}$ of the implicit language are not distinguished
 as nullable or non-null. All types in the implicit language admit the null constant.
-We define a translation of implicit language types to nullable types in the explicit language
-as follows:
-\begin{align*}
-\typofityp{\iota} &= \iota?\\
-\typofityp{\arrow{\hat{A}}{\hat{B}}} &= \arrowP{\typofityp{\hat{A}}}{\typofityp{\hat{B}}}?\\
-\end{align*}
-The translated types are equivalent in that they admit equivalent sets
-of values: in particular, the translated types admit the null constant.
 
 \TODO{Consider changing the notation for types from the implicit
     language to write them \emph{always} with question marks: $\iota?$ and
     $\arrowP{A}{B}?$.
 }
 
-
-
 \subsection{Typing}
 
-The typing rules of the explicit language from \Cref{fig:typing} remain the
-same, but one new rule \rn{Imp} is added for typing a term $\hat{M}$ of the implicit
-language embedded in the explicit language, as shown in \Cref{fig:imptyping}.
-Since a term of the explicit language can be an embedded term of the implicit
-language and vice versa, we distinguish a second typing relation $\typingi{\cdot}{\cdot}{\cdot}$
-for typing in the implicit language. Thus, the \rn{Imp} typing rule says that
-if an implicit term $\hat{M}$ has type $\hat{A}$ in the implicit language,
-then when it is embedded in the explicit language, it is considered in the
-explicit language to have the type $\trmofitrm{\hat{A}}$.
-
-The typing rules of the implicit sublanguage are also shown
-in \Cref{fig:imptyping}. They are standard except for the \rn{Imp-Exp}
-rule, which says that a term $M$ of the explicit language can be
-embedded in the implicit language if its type $\trmofitrm{\hat{A}}$
-in the explicit language is the image under the translation of some type $\hat{A}$ of
-the implicit language.
+The typing rules of the implicit language are standard, and are shown in \Cref{fig:imptyping}.
+The $\hat{\code{null}}$ constant can have any type $\hat{A}$.
 
 \input{fig/imptyping}
-
-The embedding rules \rn{Imp} and \rn{Imp-Exp} type the embedded term
-with an unmodified typing context $\Gamma$. This is in contrast to
-\citet{DBLP:conf/ecoop/NietoRRL19}, where the typing rules for similar embedding
-constructs require the embedded term to be typed in an empty context,
-prohibiting an embedded term to refer to free variables defined outside
-of it. To lift this restriction, we allow a typing context $\Gamma$
-to contain two forms of bindings, bindings with explicit types
-$x:A$ and bindings with implicit types $x:\hat{A}$. A variable
-bound to an explicit (respectively implicit) type can only be used
-in an explicit (respectively implicit) term, enforced by the
-\rn{Var} (respectively \rn{Imp-Var}) rules. This prevents
-substitution of an explicit term for a variable occurrence
-in an implicit term and vice versa. However, for example,
-if an explicit term is embedded inside an implicit term
-that is embedded in another explicit term, the inner explicit
-term may refer to variables defined in the outer explicit term,
-which would not be allowed in the system of \citet{DBLP:conf/ecoop/NietoRRL19}.
-\TODO{Say why this is important to model larger languages
-    like Java and Scala.}
 
 \subsection{Semantics}
 
 We define the semantics of the implicit language by translation
-to the explicit language, whose operational semantics we define in
+to the explicit language, whose operational semantics we defined in
 \Cref{sec:defn}. The translation is presented in \Cref{fig:translation}.
 
 \input{fig/translation}
 
-In the translation of terms of the implicit sublanguage, we will
+Types of the implicit language are translated to types in the explicit
+language that are equivalent in that 
+they admit equivalent sets
+of values: in particular, the translated types admit the null constant.
+
+In the translation of terms of the implicit language, we will
 make frequent use of pattern matching. We introduce as shorthand
 an Elvis operator $\elvis{M}{N}$ that takes a term $M$ of nullable type $D?$
 and reduces to $N$ when $M$ evaluates to $\code{null}$
@@ -106,20 +55,9 @@ in the implicit language that translate to nullable types in the
 explicit language, so these terms are translated to lifted terms
 in the explicit language. The translation of a base operation $\oplus$
 uses the Elvis operator to check the whether the operands
-$\hat{N}$ and $\hat{M}$ are null before performing the opertaion $\oplus$.
+$\hat{N}$ and $\hat{M}$ are null before performing the operation $\oplus$.
 The blame label $\blop$ is used to signal that a null check in a
 base operation failed. Similarly, the translation of a function
 application $\app{\hat{N}}{\hat{M}}$ first checks whether $\hat{N}$
 (the function) evaluates to null before evaluating the argument
 $\hat{M}$ and performing the application.
-An explicit language term embedded in the implicit language is
-just translated to itself, except that and implicit language terms
-further embedded within the embedded explicit language term are transformed
-using the translation.
-
-% An explicit language term $M$ embedded as $\etrm{M}$ in the implicit
-% language is translated to $\trmofetrm{M}$, where $\trmofetrm{\cdot}$
-% is a translation that leaves explicit language terms mostly unchanged,
-% except to apply the implicit term translation function $\trmofitrm{\cdot}$
-% when the explicit term is an embedding $\itrm{\hat{M}}$ of an implicit term
-% $\hat{M}$.

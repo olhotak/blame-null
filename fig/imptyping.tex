@@ -1,8 +1,4 @@
 \begin{figure}
-    \infrule[Imp]
-    {\typingiG{\hat{M}}{\hat{A}}}
-    {\typingG{\itrm{\hat{M}}}{\typofityp{\hat{A}}}}
-
     \infrule[Imp-Var]
     {x:\hat{A} \in \Gamma}
     {\typingiG{\hat{x}}{\hat{A}}}
@@ -24,10 +20,5 @@
     \infrule[Imp-App]
     {\typingiG{\hat{N}}{\arrow{\hat{A}}{\hat{B}}} \andalso \typingiG{\hat{M}}{\hat{A}}}
     {\typingiG{\app{\hat{N}}{\hat{M}}}{\hat{B}}}
-
-    \infrule[Imp-Exp]
-    {\typingG{M}{\typofityp{\hat{A}}}}
-    {\typingiG{\etrm{M}}{\hat{A}}}
-
-  \caption{Typing rules of null blame calculus for sublanguages with explicit and implicit nulls}\label{fig:imptyping}
+  \caption{Typing rules for language with implicit nulls}\label{fig:imptyping}
 \end{figure}
