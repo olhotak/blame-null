@@ -1,4 +1,5 @@
 \begin{figure}
+    \textbf{Subtyping}\\
     \infax[Base]
     {\subtyp{\iota}{\iota}}
 
@@ -14,6 +15,7 @@
     {\subtyp{A'}{A} \andalso \subtyp{B}{B'}}
     {\subtyp{\arrow{A}{B}}{\arrow{A'}{B'}}}
 
+    \textbf{Naive Subtyping}\\
     \infax[Naive-Base]
     {\subtypn{\iota}{\iota}}
 
@@ -29,6 +31,7 @@
     {\subtypn{A}{A'} \andalso \subtypn{B}{B'}}
     {\subtypn{\arrow{A}{B}}{\arrow{A'}{B'}}}
 
+    \textbf{Positive and Negative Subtyping}\\
     \infax[Positive-Base]
     {\subtyppos{\iota}{\iota}}
 
@@ -59,5 +62,5 @@
     {\subtyppos{A'}{A} \andalso \subtypneg{B}{B'}}
     {\subtypneg{\arrow{A}{B}}{\arrow{A'}{B'}}}
 
-  \caption{Subtyping rules of null blame calculus}\label{fig:subtyping}
+  \caption{Subtyping rules of the explicit language}\label{fig:subtyping}
 \end{figure}

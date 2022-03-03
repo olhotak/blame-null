@@ -8,14 +8,85 @@ version of the same language, or a different language such as Java or C.
 Gradual typing~\cite{siek2006gradual} is a general framework that
 enables to reason soundly about the interface between program
 components written in languages with different type systems.
-\citet{DBLP:conf/ecoop/NietoRRL19} applied gradual typing to the
+\citet{DBLP:conf/esop/WadlerF09} add the concept of \emph{blame}
+to formally identify which part of the code is responsible
+when a type cast fails at execution time.
+
+\citet{DBLP:conf/ecoop/NietoRRL19} applied gradual typing and blame to the
 case of type systems that track null references.
+Their $\lambdanull$ calculus provides, in addition to a normal
+application $\app{s}{t}$ that gets stuck if $s$ is
+$\code{null}$, a safe application $\safeapp{s}{t}{u}$
+that performs a run-time null check on $s$. Their type system
+includes a Null type inhabited
+by a $\code{null}$ constant and three forms of function types.
+All three function types are inhabited by both
+$\code{null}$ and by functions, but they differ in how terms of
+each type can be applied:
+\begin{itemize}
+    \item A term $s$ of type $\#(S\to T)$ can be applied using standard application $\app{s}{t}$.
+    \item A term $s$ of type $?(S\to T)$ can be applied using safe application $\safeapp{s}{t}{u}$.
+    \item A term $s$ of type $!(S\to T)$ can be applied using either standard applied $\app{s}{t}$ or safe application $\safeapp{s}{t}{u}$.
+\end{itemize}
+In addition to a reduction relation, the operational semantics of $\lambdanull$ defines a normalization relation 
+that changes casts between $?$-function or $!$-function types to casts between only $\#$-function types,
+and a blame assignment relation that determines, in a value that consists of a series of casts, which
+of the casts is to be blamed.
 
-\TODO{more details about why the system in that paper is complicated}
-- three function types
-- casts as values
-- weird cast reduction relation
+On top of $\lambdanull$, \citet{DBLP:conf/ecoop/NietoRRL19} define $\lambdanulls$, a calculus representing
+two languages, one with nulls reflected explicitly in its types (like Scala)
+and one without (like Java). The syntax of the two languages is mutually
+recursive with an \code{import} construct that makes it possible
+to embed a term of one of the languages within a term of the other.
+It is thus possible to call functions of in language from the
+other language. 
+However, the typing rules require each such embedded term to be closed,
+so it cannot have free variables bound in the other language.
+Thus it is not possible to construct heterogeneous data structures,
+such as a closure that closes over bindings from the other language.
+The semantics of $\lambdanulls$ is defined by translation to
+$\lambdanull$, with the \code{import} constructs translated
+to corresponding casts.
+The key result is that if any of these casts fails, the blame
+is always assigned to code from the less precise language
+in which every type admits \code{null}.
 
-\TODO{explain our improvement over that paper}
-- just a nullable type D?
-- Tangram lemma
+We capture the essence of $\lambdanull$ and $\lambdanulls$ in a system that is simpler
+and more closely related to other advances in gradual typing in the following ways:
+\begin{itemize}
+    \item Our formulation more closely follows the standard blame calculus
+of \citet{DBLP:conf/esop/WadlerF09}; in particular, their 
+Tangram Lemma applies in our system and can be used directly to assign blame
+to the less precise language whose type system ignores nullability.
+\item Our system uses only two languages, one whose type system tracks
+    the possibility of null references (the \emph{explicit language}, like Scala),
+    and one whose doesn't (the \emph{implicit language}, like Java).
+Instead of translating both to a core language with casts, we
+translate the implicit language to the explicit language.
+\item Terms of
+both languages can be arbitrarily nested and variables
+free in a term of one language can be bound in the other language.
+Given such a hybrid term, we apply the translation to all
+its implicit language subterms to yield an executable term
+uniformly in the explicit language.
+\item Our languages
+have only one form of function application and one form of function
+type.
+\item Our operational semantics is defined using a single, mostly
+standard, reduction relation.
+\end{itemize}
+Thus, our system can serve as a simpler,
+more canonical foundation for formal models of the interaction
+between languages with explicit and implicit nullability.
+
+We begin in \Cref{sec:defn} by defining the explicit language.
+In \Cref{sec:thm}, we prove its key properties: type safety, blame
+safety, and the Tangram Lemma. In \Cref{sec:impdefn}, we define
+the implicit language and its translation to the explicit language,
+and prove that the translation preserves typings. In \Cref{sec:interop},
+we explore the interoperability of the two languages: we show how terms
+of each language can be embedded in the other, define the casts
+needed to mediate between the two, and prove that any failure of
+these casts always blames the implicit language.
+
+We have formalized all of our lemmas and theorems in Coq.

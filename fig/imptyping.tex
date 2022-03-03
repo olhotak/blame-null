@@ -1,6 +1,6 @@
 \begin{figure}
     \infrule[Imp-Var]
-    {x:\hat{A} \in \Gamma}
+    {x\mathord{:}\hat{A} \in \Gamma}
     {\typingiG{\hat{x}}{\hat{A}}}
 
     \infax[Imp-Base]
@@ -14,7 +14,7 @@
     {\typingiG{\hat{\code{null}}}{\hat{A}}}
 
     \infrule[Imp-Abs]
-    {\typingi{\Gamma,x:\hat{A}}{\hat{N}}{\hat{B}}}
+    {\typingi{\Gamma,x\mathord{:}\hat{A}}{\hat{N}}{\hat{B}}}
     {\typingiG{\abs{x}{\hat{A}}{\hat{N}}}{\arrow{\hat{A}}{\hat{B}}}}
 
     \infrule[Imp-App]

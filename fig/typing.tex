@@ -2,7 +2,7 @@
 \textbf{Typing}\\
 
     \infrule[Var]
-    {x:A \in \Gamma}
+    {x\mathord{:}A \in \Gamma}
     {\typingG{x}{A}}
 
     \infax[Constant]
@@ -13,7 +13,7 @@
     {\typingG{\binop{N}{M}}{\iota}}
 
     \infrule[Abs]
-    {\typing{\Gamma,x:A}{N}{B}}
+    {\typing{\Gamma,x\mathord{:}A}{N}{B}}
     {\typingG{\abs{x}{A}{N}}{\arrow{A}{B}}}
 
     \infrule[App]
@@ -28,7 +28,7 @@
     {\typingG{\lift{N}}{D?}}
 
     \infrule[Case]
-    {\typingG{N}{D?} \andalso \typingG{M}{A} \andalso \typing{G,x:D}{L}{A}}
+    {\typingG{N}{D?} \andalso \typingG{M}{A} \andalso \typing{\Gamma,x\mathord{:}D}{L}{A}}
     {\typingG{\case{N}{M}{x}{L}}{A}}
 
     \infrule[Cast]
@@ -55,5 +55,5 @@
     {\compat{A}{A'} \andalso \compat{B}{B'}}
     {\compat{\arrow{A}{B}}{\arrow{A'}{B'}}}
 
-  \caption{Typing rules of null blame calculus}\label{fig:typing}
+  \caption{Typing rules of the explicit language}\label{fig:typing}
 \end{figure}

@@ -4,7 +4,7 @@
 
 \newcommand{\binop}[2]{#1 \oplus #2}
 \newcommand{\lift}[1]{\lbrack #1 \rbrack}
-\newcommand{\abs}[3]{\lambda #1:#2.#3}
+\newcommand{\abs}[3]{\lambda #1\mathord{:}#2.#3}
 \newcommand{\absP}[3]{(\abs{#1}{#2}{#3})}
 \newcommand{\app}[2]{#1\ #2}
 \newcommand{\appP}[2]{(\app{#1}{#2})}
@@ -68,3 +68,8 @@
 \newcommand{\sfor}[2]{#1 \textsf{ safe } #2}
 
 \newcommand{\TODO}[1]{\textcolor{red}{TODO: #1}}
+
+\newcommand{\lambdanull}{\lambda_\texttt{null}}
+\newcommand{\lambdanulls}{\lambda_\texttt{null}^s}
+
+\newcommand{\safeapp}[3]{\textit{app}(#1,#2,#3)}

@@ -72,7 +72,7 @@
 \begin{document}
 
 %% Title information
-\title[Short Title]{Full Title}         %% [Short Title] is optional;
+\title{A Simpler Blame Calculus for Explicit Nulls}         %% [Short Title] is optional;
                                         %% when present, will be used in
                                         %% header instead of Full Title.
 %\titlenote{with title note}             %% \titlenote is optional;
@@ -144,7 +144,17 @@
 %% Note: \begin{abstract}...\end{abstract} environment must come
 %% before \maketitle command
 \begin{abstract}
-Text of abstract \ldots.
+    New programming languages that track the possibility of null
+    references explicitly in their type system often interact with
+    older languages that do not. Previous work defined
+    complicated calculi that used gradual typing to formally reason about such interactions 
+    and assign blame for any cast failures to the less precisely typed language.
+    We define a pair of
+    considerably simpler languages that more closely follow standard formulations of the
+    blame calculus while enjoying the same blame assignment properties as previous work.
+    Our system, mechanized in Coq, can serve as a simpler,
+    more canonical foundation for formal models of the interaction
+    between languages with explicit and implicit nullability.
 \end{abstract}
 
 
