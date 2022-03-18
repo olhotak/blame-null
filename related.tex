@@ -1,0 +1,58 @@
+\section{Related Work}
+
+\citet{siek2006gradual,DBLP:conf/ecoop/SiekT07} introduced the concept
+of \emph{gradual typing} to enable interoperability between parts of a
+program with and without static types.
+%
+\citet{DBLP:conf/icfp/FindlerF02}
+introduced the concept of \emph{blame} to function contracts, allowing
+to assign responsibility for a runtime failure either to a function
+itself or to the arguments passed to the function.
+%
+\citet{DBLP:conf/esop/WadlerF09,DBLP:conf/snapl/Wadler15} combined
+the two concepts and proved that in a gradually typed program,
+any cast failure on the boundary can always be blamed on the untyped
+(or, more generally, the less-precisely typed) part of the program. They generalized their result in the Tangram Lemma,
+which can be instantiated for other gradually typed calculi.
+%
+\citet{DBLP:conf/popl/GarciaCT16} formalized the notion of \emph{precision}
+of a gradual type in the framework of abstract interpretation
+\citep{DBLP:conf/popl/CousotC77}, formally defining which part of
+a program is less-precisely typed and can therefore be blamed.
+
+\citet{DBLP:conf/ecoop/NietoRRL19} instantiated the concepts
+of gradual typing and blame for their explicit null extension
+of the Scala language \citep{DBLP:conf/ecoop/NietoZLCP19}.
+There, the less-precisely typed parts of a program are those
+written in Java or older versions of Scala, and the more-precisely
+typed parts are those written in the new version of Scala in which
+the possibility of a reference being null is made explicit in its
+type.
+%
+Similar issues occur in other languages that make nulls explicit
+in their type system but
+interoperate
+with older code in type systems agnostic to null.
+%
+The Kotlin language \citep{kotlin-main} aims for null safety within
+Kotlin code, but adapts Java types to avoid any compile-time errors
+related to nullability at the boundary between code written in Kotlin
+and Java. It uses a concept called \emph{platform types}, which are
+a subtype of a non-null type but a supertype of a nullable type,
+to avoid errors in both covariant and contravariant contexts.
+%
+Recent versions of the C\# language \citep{csharp-main} have nullable
+types that indicate that a reference can be null.
+Types in code written in older versions of the language are
+interpreted to mean that references are non-null. To enable interoperability,
+conversions from a nullable to a non-null type and vice versa are allowed,
+but generate a compile-time warning in areas of code designated to issue
+such warnings.
+%
+The Swift language \citep{swift-main} has \emph{optionals} similar
+to discriminated options like Scala's \code{Option} and Haskell's \code{Maybe},
+and \emph{implicitly unwrapped optionals} which are automatically cast
+to a non-null type in contexts that require one. When Swift code
+interoperates with code in Objective-C, which does not make nullability
+explicit in its types, Objective-C expressions are given an implicitly
+unwrapped optional type in Swift.
