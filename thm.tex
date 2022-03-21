@@ -4,8 +4,7 @@
 
 We have proven type safety of the explicit language following the syntactic approach of \citet{DBLP:journals/iandc/WrightF94}.
 
-\begin{theorem}[Preservation\label{thm:preservation}]
-    \coq{preservation}\\
+\begin{theorem}[Preservation\label{thm:preservation}] \coq{preservation}\\
     If $\typingG{N}{A}$ and $\red{N}{M}$, then
     either $M = \blame{p}$ for some $p$ or $\typingG{M}{A}$.
 \end{theorem}
@@ -15,8 +14,7 @@ We have proven type safety of the explicit language following the syntactic appr
     The \rn{Cast-App} case depends on symmetry of the compatibility relation $\sim$.
 \end{proof}
 
-\begin{lemma}[Substitution]
-    \coq{substitution}\\
+\begin{lemma}[Substitution] \coq{substitution}\\
     If $\typing{\Gamma,x:B}{N}{A}$ and $\typingG{M}{B}$, then $\typingG{\subst{N}{x}{M}}{A}$.
 \end{lemma}
 \begin{proof}
@@ -24,16 +22,14 @@ We have proven type safety of the explicit language following the syntactic appr
     a weakening lemma, also proved by straightforward induction.
 \end{proof}
 
-\begin{lemma}[Compatibility Symmetry]
-    \coq{compat\_sym}
+\begin{lemma}[Compatibility Symmetry] \coq{compat\_sym}
     If $\compat{A}{B}$ then $\compat{B}{A}$.
 \end{lemma}
 \begin{proof}
     The proof is by straightforward induction on the derivation of $\compat{A}{B}$.
 \end{proof}
 
-\begin{theorem}[Progress]
-    \coq{progress}
+\begin{theorem}[Progress] \coq{progress} \\
     If $\typing{}{N}{A}$ then either $N$ is a value,
     $\red{N}{M}$ for some $M$, or $N = \blame{p}$ for some $p$.
 \end{theorem}
@@ -42,8 +38,7 @@ We have proven type safety of the explicit language following the syntactic appr
     The \rn{App} case depends on a canonical forms lemma for function types, shown below.
 \end{proof}
 
-\begin{lemma}[Canonical Forms Arrow]
-    \coq{canonical\_forms\_arrow}\\
+\begin{lemma}[Canonical Forms Arrow] \coq{canonical\_forms\_arrow}\\
     If $\typing{}{V}{\arrow{A}{B}}$, then
     either $V = \abs{x}{A}{N}$ for some $x$ and $N$, or
     $V = \cast{W}{\arrow{A'}{B'}}{p}{\arrow{A''}{B''}}$ for some
@@ -65,7 +60,7 @@ explicit language in \Cref{fig:subtyping}.  Intuitively, a cast between types
 related by positive subtyping cannot give rise to positive blame
 (blame with the same label as the cast) and a cast between types
 related by negative subtyping cannot give rise to negative blame
-(blame with a label that is the negative of that on the
+(blame with a label that is the complement of that on the
 cast). Ordinary subtyping is an intersection of these two
 relations, so a cast between types related by ordinary subtyping
 cannot give rise to any blame.  We will discuss naive subtyping and
@@ -89,8 +84,7 @@ With this definition, we can prove blame safety of the explicit language, that
 when $\sfor{N}{p}$, $N$ cannot reduce to $\blame{p}$ in any number of
 steps.
 
-\begin{theorem}[Safe Term Preservation\label{thm:sfor-preservation}]
-    \coq{sfor\_preservation}\\
+\begin{theorem}[Safe Term Preservation\label{thm:sfor-preservation}] \coq{sfor\_preservation}\\
     If $\typingG{N}{A}$, $\sfor{N}{p}$, and $\red{N}{M}$, then $\sfor{M}{p}$.
 \end{theorem}
 \begin{proof}
@@ -100,8 +94,7 @@ steps.
     substitution.
 \end{proof}
 
-\begin{lemma}[Substitution Preserves Safe Terms]
-    \coq{subst\_pres\_sfor}\\
+\begin{lemma}[Substitution Preserves Safe Terms] \coq{subst\_pres\_sfor}\\
     If $\sfor{N}{p}$ and $\sfor{M}{p}$, then $\sfor{\subst{N}{x}{M}}{p}$.
 \end{lemma}
 \begin{proof}
@@ -116,7 +109,7 @@ steps.
     This follows directly from \Cref{thm:sfor-preservation} and the definition of \textsf{safe}.
 \end{proof}
 
-\begin{theorem}[Blame Safety]
+\begin{theorem}[Blame Safety] \coq{safety}\\
     If $\typing{}{N}{A}$, $\sfor{N}{p}$, and $\redst{N}{\blame{q}}$, then $p \neq q$.
 \end{theorem}
 \begin{proof}
@@ -149,8 +142,7 @@ more definite types in a language with explicit nulls.
 The Tangram Lemma of \citet{DBLP:conf/esop/WadlerF09} relates these four subtyping
 relations. We show that it holds for the specific relations defined in \Cref{fig:subtyping}.
 
-\begin{theorem}[Tangram Lemma\label{thm:tangram}]
-    \coq{tangram\_fwd}
+\begin{theorem}[Tangram Lemma\label{thm:tangram}] \coq{tangram\_fwd}
     \coq{tangram\_rev}
     \coq{tangram\_naive\_fwd}
     \coq{tangram\_naive\_rev}
@@ -165,7 +157,7 @@ relations. We show that it holds for the specific relations defined in \Cref{fig
     on the derivations of $\subtyppos{A}{B}$ and $\subtypneg{A}{B}$.
 \end{proof}
 
-\TODO{Explain the practical consequence of the Tangram Lemma for the Scala/Java case.}
+% \TODO{Explain the practical consequence of the Tangram Lemma for the Scala/Java case.}
 
 % \TODO{PLW: Explain the grayed out portions of Figure 4, or remove them.}
 % OL: I've removed the shading. It did not have any semantic meaning other than to draw attention to certain details.

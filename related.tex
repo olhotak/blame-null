@@ -1,4 +1,4 @@
-\section{Related Work}
+\section{Related Work\label{sec:rw}}
 
 \citet{siek2006gradual,DBLP:conf/ecoop/SiekT07} introduced the concept
 of \emph{gradual typing} to enable interoperability between parts of a
@@ -21,7 +21,7 @@ of a gradual type in the framework of abstract interpretation
 a program is less-precisely typed and can therefore be blamed.
 
 \citet{DBLP:conf/ecoop/NietoRRL19} instantiated the concepts
-of gradual typing and blame for their explicit null extension
+of gradual typing and blame for their explicit-null extension
 of the Scala language \citep{DBLP:conf/ecoop/NietoZLCP19}.
 There, the less-precisely typed parts of a program are those
 written in Java or older versions of Scala, and the more-precisely
@@ -39,7 +39,7 @@ Kotlin code, but adapts Java types to avoid any compile-time errors
 related to nullability at the boundary between code written in Kotlin
 and Java. It uses a concept called \emph{platform types}, which are
 a subtype of a non-null type but a supertype of a nullable type,
-to avoid errors in both covariant and contravariant contexts.
+to avoid reporting errors in both covariant and contravariant contexts.
 %
 Recent versions of the C\# language \citep{csharp-main} have nullable
 types that indicate that a reference can be null.

@@ -34,7 +34,7 @@ abstraction and application are standard. The
 operation $\lift{M}$ as the constructors of a nullable type $D?$.
 The \rn{Blame} rule specifies that a failure result $\blame{p}$ is possible at
 any type $A$. The \rn{Cast} rule allows casts from type $A$ to type $B$ as
-long as $A$ and $B$ are \emph{compatible}, written $\arrow{A}{B}$. Informally, two types are compatible
+long as $A$ and $B$ are \emph{compatible}, written $\compat{A}{B}$. Informally, two types are compatible
 if they have the same structure, but differ only in the nullability of their components.
 Finally, the \rn{Case} rule specifies that the $\code{case}$ construct
 destructs terms of a nullable type $D?$.

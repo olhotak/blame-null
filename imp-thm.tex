@@ -2,8 +2,7 @@
 
 The translation from the implicit language
 to the explicit language preserves typing:
-\begin{theorem}[Translation Preserves Typing\label{thm:translationtyping}]
-    \coq{desugaring\_typing}
+\begin{theorem}[Translation Preserves Typing\label{thm:translationtyping}] \coq{desugaring\_typing}\\
         If $\typingi{\Gamma}{\hat{N}}{\hat{A}}$, then
             $\typing{\ctxofictx{\Gamma}}{\trmofitrm{\hat{N}}}{\typofityp{\hat{A}}}$,
             where
@@ -24,8 +23,7 @@ to the explicit language preserves typing:
         All other cases are straightforward.
 \end{proof}
 
-\begin{lemma}[Substitution Commutes With Translation\label{lem:substcommutes}]
-    \coq{open\_trm\_of\_itrm}
+\begin{lemma}[Substitution Commutes With Translation\label{lem:substcommutes}] \coq{open\_trm\_of\_itrm}\\
         \item $\trmofitrm{\subst{\hat{N}}{\hat{x}}{\hat{M}}} = \subst{\trmofitrm{\hat{N}}}{x}{\trmofitrm{\hat{M}}}$
 \end{lemma}
 \begin{proof}
@@ -76,8 +74,8 @@ We define a \emph{naive} translation of implicit types as follows:
 \typofitypn{\iota} &= \iota\\
 \typofitypn{\arrow{\hat{A}}{\hat{B}}} &= \arrow{\typofitypn{\hat{A}}}{\typofitypn{\hat{B}}}
 \end{align*}
-The naive translation maps a constant type of the implicit language
-to a constant type of the core language and it maps a function type
+The naive translation maps a base type of the implicit language
+to a base type of the core language and it maps a function type
 of the implicit language to a function type of the core language.
 Thus, given a term $\hat{N}$ of type $\hat{A}$ in the implicit
 language, we can use it directly in the explicit language if we
@@ -91,9 +89,9 @@ subterm $\trmofitrm{\hat{N}}$ rather than the surrounding explicit language cont
 This is because 
 $\typofitypn{\hat{A}}$ is a naive subtype of
 $\typofityp{\hat{A}}$:
-\begin{lemma}
+\begin{theorem}[Implicit Naive Subtyping] \coq{imp\_naive\_subtyp}\\
     For every implicit type $\hat{A}$, $\subtypn{\typofitypn{\hat{A}}}{\typofityp{\hat{A}}}$.
-\end{lemma}
+\end{theorem}
 \begin{proof}
     The proof is by straightforward induction on the structure of $\hat{A}$.
 \end{proof}
@@ -156,9 +154,9 @@ is a function type with a non-null domain type, the cast could fail if the surro
 implicit context invokes the function with a null argument.
 The cast cannot fail with positive blame because
 $A$ is a naive subtype of $\typofityp{\itypoftyp{A}}$:
-\begin{lemma}
+\begin{theorem}[Explicit Naive Subtyping] \coq{exp\_naive\_subtyp}\\
     For every explicit type $A$, $\subtypn{A}{\typofityp{\itypoftyp{A}}}$.
-\end{lemma}
+\end{theorem}
 \begin{proof}
     The proof is by straightforward induction on the structure of $A$.
 \end{proof}

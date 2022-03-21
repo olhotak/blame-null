@@ -3,7 +3,7 @@ Programming languages such as Scala, Kotlin, C\#, and Swift are adopting
 type systems that track whether a reference may be null. An
 important concern in such languages is interfacing with existing code in
 a language that does not track nullability in types, such as an older
-version of the same language, or a different language such as Java or C.
+version of the same language or a different language such as Java or C.
 
 Gradual typing~\cite{siek2006gradual} is a general framework that
 enables to reason soundly about the interface between program
@@ -26,19 +26,19 @@ each type can be applied:
 \begin{itemize}
     \item A term $s$ of type $\#(S\to T)$ can be applied using standard application $\app{s}{t}$.
     \item A term $s$ of type $?(S\to T)$ can be applied using safe application $\safeapp{s}{t}{u}$.
-    \item A term $s$ of type $!(S\to T)$ can be applied using either standard applied $\app{s}{t}$ or safe application $\safeapp{s}{t}{u}$.
+    \item A term $s$ of type $!(S\to T)$ can be applied using either standard application $\app{s}{t}$ or safe application $\safeapp{s}{t}{u}$.
 \end{itemize}
 In addition to a reduction relation, the operational semantics of $\lambdanull$ defines a normalization relation 
 that changes casts between $?$-function or $!$-function types to casts between only $\#$-function types,
 and a blame assignment relation that determines, in a value that consists of a series of casts, which
 of the casts is to be blamed.
 
-On top of $\lambdanull$, \citet{DBLP:conf/ecoop/NietoRRL19} define $\lambdanulls$, a calculus representing
+On top of $\lambdanull$, \citeauthor{DBLP:conf/ecoop/NietoRRL19} define $\lambdanulls$, a calculus representing
 two languages, one with nulls reflected explicitly in its types (like Scala)
 and one without (like Java). The syntax of the two languages is mutually
 recursive with an \code{import} construct that makes it possible
 to embed a term of one of the languages within a term of the other.
-It is thus possible to call functions of in language from the
+It is thus possible to call functions of one language from the
 other language. 
 However, the typing rules require each such embedded term to be closed,
 so it cannot have free variables bound in the other language.
@@ -87,7 +87,8 @@ and prove that the translation preserves typings. In \Cref{sec:interop},
 we explore the interoperability of the two languages: we show how terms
 of each language can be embedded in the other, define the casts
 needed to mediate between the two, and prove that any failure of
-these casts always blames the implicit language.
+these casts always blames the implicit language. We survey related work
+in \Cref{sec:rw} and conclude in \Cref{sec:conclusion}.
 
 We have formalized all of our lemmas and theorems in Coq. We will
 submit our Coq formalization to the OOPSLA Artifact Evaluation process.
