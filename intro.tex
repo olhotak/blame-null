@@ -1,94 +1,154 @@
 \section{Introduction}
-Programming languages such as Scala, Kotlin, C\#, and Swift are adopting
-type systems that track whether a reference may be null. An
-important concern in such languages is interfacing with existing code in
-a language that does not track nullability in types, such as an older
-version of the same language or a different language such as Java or C.
 
-Gradual typing~\cite{siek2006gradual} is a general framework that
-enables to reason soundly about the interface between program
-components written in languages with different type systems.
-\citet{DBLP:conf/esop/WadlerF09} add the concept of \emph{blame}
-to formally identify which part of the code is responsible
-when a type cast fails at execution time.
+Null pointers are infamous for causing software errors, with Tony
+Hoare characterising them as ``The Billion Dollar Bug''.
 
-\citet{DBLP:conf/ecoop/NietoRRL19} applied gradual typing and blame to the
+Programming language design suggests a way to tame the danger
+posed by null.  Whereas older languages, such as C and Java,
+permit nulls anywhere, more recent designs, including Kotlin,
+Scala, C\#, and Swift, adopt type systems that track whether
+a reference may be null.  One question that arises is how to
+permit code in the older and newer languages to interact while
+preserving the type guarantees of the new languages.
+
+Gradual typing provides a sound theoretical basis for answering such
+questions, where a legacy language with a less precise type system
+(such as Java) interacts with a newer language with a more precise
+type system (such as Kotlin or Scala).  Important early systems
+include those by \citet{Findler-and-Felleisen} and
+\citet{Siek-and-Taha}.  They introduce casts to model monitoring the
+barrier between the two languages.  Each cast checks at runtime
+whether values passed from the less-precisely typed language violate
+guarantees expected by more-precisely typed language.
+
+A key innovation, introduced by \citet{Findler-and-Felleisen} is that
+when a cast fails blame is attributed to either the source or the
+target of the cast.  \citet{Greenberg-and-Felleisen} (TODO: check
+citation!) exploit this innovation to prove that when a cast fails,
+blame always lies with the less-precisely typed side of the cast.
+Though the fact is obvious, their proof is not, depending on
+observational equivalence.  \citet{Wadler-and-Findler} introduced
+the \emph{blame calculus} as an abstraction of the earlier models, and
+offered a simpler proof of the obvious fact based on a simple
+syntactic notion of \emph{blame safety} and a straightforward
+proof basedd on progress and preservation.
+
+\citet{Nieto-et-al-2019} applied gradual typing and blame to the
 case of type systems that track null references.
-Their $\lambdanull$ calculus provides, in addition to a normal
-application $\app{s}{t}$ that gets stuck if $s$ is
-$\code{null}$, a safe application $\safeapp{s}{t}{u}$
-that performs a run-time null check on $s$. Their type system
-includes a Null type inhabited
-by a $\code{null}$ constant and three forms of function types.
-All three function types are inhabited by both
-$\code{null}$ and by functions, but they differ in how terms of
-each type can be applied:
+Their $\lambdanull$ calculus supports three function types:
 \begin{itemize}
-    \item A term $s$ of type $\#(S\to T)$ can be applied using standard application $\app{s}{t}$.
-    \item A term $s$ of type $?(S\to T)$ can be applied using safe application $\safeapp{s}{t}{u}$.
-    \item A term $s$ of type $!(S\to T)$ can be applied using either standard application $\app{s}{t}$ or safe application $\safeapp{s}{t}{u}$.
+\item $\#(S \to T)$ is a non-nullable function, corresponding to a
+  non-nullable type such as \code{String} in Scala or Kotlin.
+  Values of this type cannot be null. (There are technical exceptions
+  where the value can be null, as explained in that paper.)
+\item $?(S \to T)$ is a safe nullable function, corresponding to
+  a nullable type such as \code{String|Null} in Scala or
+  \code{String?} in Kotlin.  Values of this type can be null,
+  and the type system ensures nulls are properly handled.
+\item $!(S \to T)$ is an unsafe nullable function, corresponding
+  to a type such as \code{String} in Java. Values of this type
+  can be null, but the type system guarantees nothing about proper
+  handling of such nulls.
 \end{itemize}
-In addition to a reduction relation, the operational semantics of $\lambdanull$ defines a normalization relation 
-that changes casts between $?$-function or $!$-function types to casts between only $\#$-function types,
-and a blame assignment relation that determines, in a value that consists of a series of casts, which
-of the casts is to be blamed.
 
-On top of $\lambdanull$, \citeauthor{DBLP:conf/ecoop/NietoRRL19} define $\lambdanulls$, a calculus representing
-two languages, one with nulls reflected explicitly in its types (like Scala)
-and one without (like Java). The syntax of the two languages is mutually
-recursive with an \code{import} construct that makes it possible
-to embed a term of one of the languages within a term of the other.
-It is thus possible to call functions of one language from the
-other language. 
-However, the typing rules require each such embedded term to be closed,
-so it cannot have free variables bound in the other language.
-Thus it is not possible to construct heterogeneous data structures,
-such as a closure that closes over bindings from the other language.
-The semantics of $\lambdanulls$ is defined by translation to
-$\lambdanull$, with the \code{import} constructs translated
-to corresponding casts.
-The key result is that if any of these casts fails, the blame
-is always assigned to code from the less precise language
-in which every type admits \code{null}.
-
-We capture the essence of $\lambdanull$ and $\lambdanulls$ in a system that is simpler
-and more closely related to other advances in gradual typing in the following ways:
+Their system also supports two forms of application,
+normal application $\app{s}{t}$
+and safe application $\safeapp{s}{t}{u}$.
+Both apply $s$ to $t$ when the function is not null,
+but when the function is null the former gets stuck
+while the latter returns $u$.  The two forms of application
+align with the three function types as follows.
+Consider the type of a function term $s$.
 \begin{itemize}
-    \item Our formulation more closely follows the standard blame calculus
-of \citet{DBLP:conf/esop/WadlerF09}; in particular, their 
-Tangram Lemma applies in our system and can be used directly to assign blame
-to the less precise language whose type system ignores nullability.
-\item Our system uses only two languages, one whose type system tracks
-    the possibility of null references (the \emph{explicit language}, like Scala),
-    and one whose doesn't (the \emph{implicit language}, like Java).
-Instead of translating both to a core language with casts, we
-translate the implicit language to the explicit language.
-\item Terms of
-both languages can be arbitrarily nested and variables
-free in a term of one language can be bound in the other language.
-Given such a hybrid term, we apply the translation to all
-its implicit language subterms to yield an executable term
-uniformly in the explicit language.
-\item Our languages
-have only one form of function application and one form of function
-type.
-\item Our operational semantics is defined using a single, mostly
-standard, reduction relation.
+\item $\#(S \to T)$ can be applied using standard application $\app{s}{t}$.
+\item $?(S \to T)$ can be applied using safe application $\safeapp{s}{t}{u}$.
+\item $!(S \to T)$ can be applied using either standard application
+  $\app{s}{t}$ or safe application $\safeapp{s}{t}{u}$.
 \end{itemize}
-Thus, our system can serve as a simpler,
+
+Casts may be used to convert the types of terms, and in particular
+to convert functions between these various types.  At runtime, if
+a cast attempts to convert null from one of the latter two types
+to the first type the cast will fail, assigning blame appropriately
+to one side or the other of the cast.
+
+On top of $\lambdanull$, that paper also defines $\lambdanulls$, a
+calculus representing two languages, one with nulls reflected
+explicitly in its types (like Scala or Kotlin) and one where nulls are
+implicitly permitted everywhere (like Java).  The syntax of the two
+languages is mutually recursive with an import construct that makes it
+possible to embed a term of one of the languages within a term of the
+other, modeling that it is possible to call either language from the
+other.  The typing rules require each such embedded term to be closed,
+so it cannot have free variables bound in the other language.  Thus it
+is not possible to construct heterogeneous data structures, such as a
+closure that closes over bindings from the other language. [TODO:
+Check!]  The semantics of $\lambdanulls$ is defined by translation to
+$\lambdanull$, with import constructs translated to
+corresponding casts.  The key result is that if any of these casts
+fails, the blame is always assigned to code from the less-precisely
+typed implicit language.
+
+This paper reiterates the development of the earlier paper,
+but using a simpler system and one that is closer to the standard
+development of blame calculus.
+\begin{itemize}
+\item  Instead of three variants of function types,
+  our design is more orthogonal.  There is a function type $A \to B$,
+  and there is a nullable type $D?$, which adds nulls to an existing
+  type $D$.  Here $A$ and $B$ range
+  over all types, while $D$ is restricted to \emph{definite} types that do not
+  already admit nulls.  (This syntax rules out potentially confusing
+  types such as $D??$.)  The values of type $D?$ are either \code{null}
+  or of the form $[V]$, where $V$ is a value of type $D$.
+
+\item Instead of two forms of application, one
+  safe and one unsafe, our orthogonal system of types leads to
+  a corresponding orthogonal system of terms, based on
+  standard forms of application for functions and case
+  analysis for nullable values.
+
+\item Instead of a high-level language $\lambdanulls$ with explicit
+  and implicit sublanguages that translates into a core language
+  $\lambdanull$, we use a simpler framework. We define an
+  \emph{explicit} language that fills the roll of both $\lambdanull$
+  and the explicit half of $\lambdanulls$ and we define an
+  \emph{implicit} language that is given a semantics by translation
+  into the explicit language.
+  
+\item Because the implicit language is given a semantics by
+  translation into the explicit language, it is easy to assign
+  a semantics to arbitrary nesting of explicit and implicit
+  terms.  There is no longer a requirement that nested terms
+  be closed; free variables of a term in one language can
+  be bound in the other language.
+
+\item The resulting development is simpler and more standard than
+  the previous development.  In particular, we adapt the Tangram
+  Lemma of \citet{Wadler-and-Findler} to prove that blame is
+  always assigned to the less-precisely typed language.
+  The previous development never mentioned the Tangram Lemma,
+  relying instead on a more convoluted argument.
+\end{itemize}  
+Thus, our system can serve as a simpler and
 more canonical foundation for formal models of the interaction
-between languages with explicit and implicit nullability.
+between languages with explicit and implicit nulls.
 
-We begin in \Cref{sec:defn} by defining the explicit language.
-In \Cref{sec:thm}, we prove its key properties: type safety, blame
-safety, and the Tangram Lemma. In \Cref{sec:impdefn}, we define
-the implicit language and its translation to the explicit language,
-and prove that the translation preserves typings. In \Cref{sec:interop},
-we explore the interoperability of the two languages: we show how terms
+The paper is organised as follows.
+Section~\ref{sec:defn} defines the explicit language.
+Section~\ref{sec:thm} proves its key properties:
+type safety, blame safety, and the Tangram Lemma.
+Section~\ref{sec:impdefn} defines the implicit language
+and its translation to the explicit language,
+and proves that the translation preserves types.
+Section~\ref{sec:interop} explores interoperability of
+the two languages: we show how terms
 of each language can be embedded in the other, define the casts
 needed to mediate between the two, and prove that any failure of
-these casts always blames the implicit language. We survey related work
-in \Cref{sec:rw} and conclude in \Cref{sec:conclusion}.
+these casts always blames the implicit language.
+Section~\ref{sec:rw} surveys related work.
+Section~\ref{sec:conclusion} concludes.
 
 We have formalized all of our lemmas and theorems in Coq. We will
-submit our Coq formalization to the OOPSLA Artifact Evaluation process.
+submit our Coq formalization to the OOPSLA Artifact Evaluation
+process.
