@@ -1,15 +1,14 @@
 \section{Introduction}
 
-Null pointers are infamous for causing software errors, with Tony
-Hoare characterising them as ``The Billion Dollar Bug''.
+Null pointers are infamous for causing software errors.
+\citet{Hoare} characterised them as ``The Billion Dollar Bug''.
 
-Programming language design suggests a way to tame the danger
-posed by null.  Whereas older languages, such as C and Java,
-permit nulls anywhere, more recent designs, including Kotlin,
-Scala, C\#, and Swift, adopt type systems that track whether
-a reference may be null.  One question that arises is how to
-permit code in the older and newer languages to interact while
-preserving the type guarantees of the new languages.
+One way to tame the danger of nulls is via types.  Whereas older
+languages, such as Pascal and Java, permit nulls at any reference
+type, more recent designs, including Kotlin, Scala, C\#, and Swift,
+adopt type systems that track whether a reference may be null.  How do
+we permit code in older and newer languages to interact while
+preserving the type guarantees of the newer languages?
 
 Gradual typing provides a sound theoretical basis for answering such
 questions, where a legacy language with a less precise type system
@@ -23,8 +22,8 @@ guarantees expected by more-precisely typed language.
 
 A key innovation, introduced by \citet{Findler-and-Felleisen} is that
 when a cast fails blame is attributed to either the source or the
-target of the cast.  \citet{Greenberg-and-Felleisen} (TODO: check
-citation!) exploit this innovation to prove that when a cast fails,
+target of the cast.  \citet{Greenberg-and-Felleisen} [TODO: check
+citation!] exploit this innovation to prove that when a cast fails,
 blame always lies with the less-precisely typed side of the cast.
 Though the fact is obvious, their proof is not, depending on
 observational equivalence.  \citet{Wadler-and-Findler} introduced
