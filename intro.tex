@@ -2,6 +2,11 @@
 
 Null pointers are infamous for causing software errors.
 \citet{Hoare} characterised them as ``The Billion Dollar Bug''.
+\TODO{Find citation. The only one I know of is
+    https://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare/
+    This is a presentation, not a paper.
+}
+
 
 One way to tame the danger of nulls is via types.  Whereas older
 languages, such as Pascal and Java, permit nulls at any reference
@@ -18,19 +23,24 @@ include those by \citet{Findler-and-Felleisen} and
 \citet{Siek-and-Taha}.  They introduce casts to model monitoring the
 barrier between the two languages.  Each cast checks at runtime
 whether values passed from the less-precisely typed language violate
-guarantees expected by more-precisely typed language.
+guarantees expected by the more-precisely typed language.
 
 A key innovation, introduced by \citet{Findler-and-Felleisen} is that
 when a cast fails blame is attributed to either the source or the
 target of the cast.  \citet{Greenberg-and-Felleisen} [TODO: check
-citation!] exploit this innovation to prove that when a cast fails,
+citation!]
+\TODO{Perhaps Tobin-Hochstadt and Felleisen (2006) or Matthews and Findler (2007).
+    https://dl.acm.org/doi/10.1145/1176617.1176755
+    https://dl.acm.org/doi/10.1145/1190215.1190220
+}
+exploit this innovation to prove that when a cast fails,
 blame always lies with the less-precisely typed side of the cast.
 Though the fact is obvious, their proof is not, depending on
 observational equivalence.  \citet{Wadler-and-Findler} introduced
 the \emph{blame calculus} as an abstraction of the earlier models, and
 offered a simpler proof of the obvious fact based on a simple
 syntactic notion of \emph{blame safety} and a straightforward
-proof basedd on progress and preservation.
+proof based on progress and preservation.
 
 \citet{Nieto-et-al-2019} applied gradual typing and blame to the
 case of type systems that track null references.

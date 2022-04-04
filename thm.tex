@@ -51,9 +51,9 @@ We have proven type safety of the explicit language following the syntactic appr
 \subsection{Blame Safety}
 
 In addition to type safety, we have also proved blame safety following directly
-the approach of \citet{DBLP:conf/esop/WadlerF09} (see also \citet{DBLP:conf/snapl/Wadler15} for a more accessible summary of the approach). The applicability of this standard
+the approach of \citet{Wadler-and-Findler} (see also \citet{DBLP:conf/snapl/Wadler15} for a more accessible summary of the approach). The applicability of this standard
 approach is one of the benefits of the explicit language relative to the calculus of
-\citet{DBLP:conf/ecoop/NietoRRL19}.
+\citet{Nieto-et-al-2019}.
 
 The approach depends on four subtyping relations, defined for the
 explicit language in \Cref{fig:subtyping}.  Intuitively, a cast between types
@@ -139,7 +139,7 @@ more definite types in a language with explicit nulls.
 % The implementation of the Scala 3 compiler uses naive subtyping to translate types
 % from Java code into its own Scala internal representation.
 
-The Tangram Lemma of \citet{DBLP:conf/esop/WadlerF09} relates these four subtyping
+The Tangram Lemma of \citet{Wadler-and-Findler} relates these four subtyping
 relations. We show that it holds for the specific relations defined in \Cref{fig:subtyping}.
 
 \begin{theorem}[Tangram Lemma\label{thm:tangram}] \coq{tangram\_fwd}

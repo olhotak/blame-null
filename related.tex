@@ -1,15 +1,15 @@
 \section{Related Work\label{sec:rw}}
 
-\citet{siek2006gradual,DBLP:conf/ecoop/SiekT07} introduced the concept
+\citet{Siek-and-Taha,DBLP:conf/ecoop/SiekT07} introduced the concept
 of \emph{gradual typing} to enable interoperability between parts of a
 program with and without static types.
 %
-\citet{DBLP:conf/icfp/FindlerF02}
+\citet{Findler-and-Felleisen}
 introduced the concept of \emph{blame} to function contracts, allowing
 to assign responsibility for a runtime failure either to a function
 itself or to the arguments passed to the function.
 %
-\citet{DBLP:conf/esop/WadlerF09,DBLP:conf/snapl/Wadler15} combined
+\citet{Wadler-and-Findler,DBLP:conf/snapl/Wadler15} combined
 the two concepts and proved that in a gradually typed program,
 any cast failure on the boundary can always be blamed on the untyped
 (or, more generally, the less-precisely typed) part of the program. They generalized their result in the Tangram Lemma,
@@ -20,7 +20,7 @@ of a gradual type in the framework of abstract interpretation
 \citep{DBLP:conf/popl/CousotC77}, formally defining which part of
 a program is less-precisely typed and can therefore be blamed.
 
-\citet{DBLP:conf/ecoop/NietoRRL19} instantiated the concepts
+\citet{Nieto-et-al-2019} instantiated the concepts
 of gradual typing and blame for their explicit-null extension
 of the Scala language \citep{DBLP:conf/ecoop/NietoZLCP19}.
 There, the less-precisely typed parts of a program are those
