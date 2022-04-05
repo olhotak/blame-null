@@ -1,12 +1,7 @@
 \section{Introduction}
 
 Null pointers are infamous for causing software errors.
-\citet{Hoare} characterised them as ``The Billion Dollar Bug''.
-\TODO{Find citation. The only one I know of is
-    https://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare/
-    This is a presentation, not a paper.
-}
-
+\citet{Hoare-mistake} characterised them as ``The Billion Dollar Mistake''.
 
 One way to tame the danger of nulls is via types.  Whereas older
 languages, such as Pascal and Java, permit nulls at any reference
@@ -27,12 +22,7 @@ guarantees expected by the more-precisely typed language.
 
 A key innovation, introduced by \citet{Findler-and-Felleisen} is that
 when a cast fails blame is attributed to either the source or the
-target of the cast.  \citet{Greenberg-and-Felleisen} [TODO: check
-citation!]
-\TODO{Perhaps Tobin-Hochstadt and Felleisen (2006) or Matthews and Findler (2007).
-    https://dl.acm.org/doi/10.1145/1176617.1176755
-    https://dl.acm.org/doi/10.1145/1190215.1190220
-}
+target of the cast.  \citet{Tobin-Hochstadt-and-Felleisen,Matthews-and-Findler}
 exploit this innovation to prove that when a cast fails,
 blame always lies with the less-precisely typed side of the cast.
 Though the fact is obvious, their proof is not, depending on
@@ -89,10 +79,9 @@ languages is mutually recursive with an import construct that makes it
 possible to embed a term of one of the languages within a term of the
 other, modeling that it is possible to call either language from the
 other.  The typing rules require each such embedded term to be closed,
-so it cannot have free variables bound in the other language.  Thus it
-is not possible to construct heterogeneous data structures, such as a
-closure that closes over bindings from the other language. [TODO:
-Check!]  The semantics of $\lambdanulls$ is defined by translation to
+so it cannot have free variables bound in the other language.  Thus
+a closure in one language cannot close over bindings from the other language.
+The semantics of $\lambdanulls$ is defined by translation to
 $\lambdanull$, with import constructs translated to
 corresponding casts.  The key result is that if any of these casts
 fails, the blame is always assigned to code from the less-precisely
